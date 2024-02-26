@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kare/OtpPage.dart';
 
 class Lupapassword extends StatefulWidget {
   @override
@@ -61,6 +62,11 @@ class _LupapasswordState extends State<Lupapassword> {
             ElevatedButton(
               onPressed: () {
                 // Action ketika tombol "Selanjutnya" diklik
+                Navigator.push(
+                     // Action ketika tombol "Lupa Password" diklik
+                    context,
+                    MaterialPageRoute(builder: (context) => OtpPage()), // Ganti LupaPasswordScreen dengan nama kelas layar Anda
+                  );
               },
               style: ElevatedButton.styleFrom(
                 primary: Color(0xFF21690F), // Ubah warna tombol menjadi hijau gelap

@@ -40,7 +40,7 @@ class _LoginState extends State<Login> {
             SizedBox(height: 40),
             TextField(
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: 'Email', 
                 border: OutlineInputBorder(),
                 labelStyle: TextStyle(color: Colors.black),
                 focusedBorder: OutlineInputBorder(

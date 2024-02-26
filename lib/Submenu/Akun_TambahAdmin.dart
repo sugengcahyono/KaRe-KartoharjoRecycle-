@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kare/Submenu/Akun_GantiPassword.dart';
 
+import 'Akun_DataAdmin.dart';
+
 class Akun_TambahAkun extends StatefulWidget {
   const Akun_TambahAkun({Key? key}) : super(key: key);
 
@@ -28,20 +30,26 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
               ),
             ),
             PopupMenuButton<String>(
-              onSelected: (value) {
-                // Tambahkan logika untuk setiap opsi yang dipilih di sini
-                print(value);
-                 MaterialPageRoute(builder: (context) => Akun_GantiPassword());
-              },
-              itemBuilder: (BuildContext context) {
-                return ['Data Admin'].map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
-              },
-            ),
+            onSelected: (value) {
+              // Tambahkan logika untuk setiap opsi yang dipilih di sini
+              print(value);
+              if (value == 'Data Admin') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DataAdminPage()),
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return ['Data Admin'].map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+
           ],
         ),
         leading: IconButton(

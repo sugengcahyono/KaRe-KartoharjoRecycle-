@@ -51,7 +51,7 @@ class Akun extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
+                        primary: Colors.green.shade100,
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -80,7 +80,7 @@ class Akun extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
+                        primary: Colors.green.shade100,
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -93,7 +93,7 @@ class Akun extends StatelessWidget {
                           Align( // Menggunakan Align untuk memposisikan teks di sebelah kiri
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'Ganti Password',
+                              'Ubah Password',
                               style: TextStyle(fontSize: 16, color: Colors.black),
                             ),
                           ),
@@ -110,7 +110,7 @@ class Akun extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
+                        primary: Colors.green.shade100,
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -164,7 +164,7 @@ class Akun extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
+                      primary: Colors.green.shade100,
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),

@@ -19,7 +19,7 @@ class _Akun_GantiPasswordState extends State<Akun_GantiPassword> {
         centerTitle: true,
         backgroundColor: Colors.white,
         title: Text(
-          "Ganti Password",
+          "Ubah Password",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(

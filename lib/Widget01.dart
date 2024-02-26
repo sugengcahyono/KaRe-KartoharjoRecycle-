@@ -32,7 +32,7 @@ class _MyWidgetState extends State<MyWidget> {
             color: Colors.black,
             activeColor: Color(0xFF21690F),
             tabBackgroundColor: Colors.white,
-            tabActiveBorder: Border.all(color: Colors.black),
+            tabActiveBorder: Border.all(color: Color(0xFF21690F)),
             gap: 5,
             padding: EdgeInsets.all(10),
             tabs: const [
