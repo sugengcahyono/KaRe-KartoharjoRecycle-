@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../Submenu/Beranda_Pupuk.dart';
+import '../Submenu/Beranda_kegiatan.dart';
+import 'Akun.dart';
+
 class BerandaPage extends StatelessWidget {
   // Contoh nama pengguna
   final String namaPengguna = "John";
@@ -30,7 +34,10 @@ class BerandaPage extends StatelessWidget {
                         children: [
                           Text(
                             'Hallo, $namaPengguna',
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
                           SizedBox(height: 15),
                           Text.rich(
@@ -38,11 +45,15 @@ class BerandaPage extends StatelessWidget {
                               children: [
                                 TextSpan(
                                   text: 'Lihat Aktivitasmu dan Kelola TPST\n',
-                                  style: TextStyle(fontSize: 16, color: Colors.white),
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
                                 ),
                                 TextSpan(
                                   text: 'Kartoharjo',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: Colors.white),
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white),
                                 ),
                               ],
                             ),
@@ -54,7 +65,7 @@ class BerandaPage extends StatelessWidget {
                     // Container 1 - Berat Sampah per Hari
                     Center(
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 0.85,
+                        width: MediaQuery.of(context).size.width * 0.9,
                         height: 120,
                         padding: EdgeInsets.all(20),
                         margin: EdgeInsets.symmetric(vertical: 10),
@@ -70,12 +81,16 @@ class BerandaPage extends StatelessWidget {
                               children: [
                                 Text(
                                   'Berat Sampah Per-Hari',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(height: 10),
                                 Text(
                                   '100 kg', // Atur nominal berat di sini
-                                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -93,7 +108,7 @@ class BerandaPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width * 0.4,
+                          width: MediaQuery.of(context).size.width * 0.425,
                           height: 120,
                           padding: EdgeInsets.all(20),
                           margin: EdgeInsets.symmetric(vertical: 10),
@@ -106,12 +121,14 @@ class BerandaPage extends StatelessWidget {
                             children: [
                               Text(
                                 'Per-Bulan',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 5),
                               Text(
                                 '500 kg', // Atur nominal berat di sini
-                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 10),
                               // Tambahkan konten berat sampah per bulan disini
@@ -120,7 +137,7 @@ class BerandaPage extends StatelessWidget {
                         ),
                         // Container 3 - Berat Sampah per Tahun
                         Container(
-                          width: MediaQuery.of(context).size.width * 0.4,
+                          width: MediaQuery.of(context).size.width * 0.425,
                           height: 120,
                           padding: EdgeInsets.all(20),
                           margin: EdgeInsets.symmetric(vertical: 10),
@@ -133,12 +150,14 @@ class BerandaPage extends StatelessWidget {
                             children: [
                               Text(
                                 'Per-Tahun',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 5),
                               Text(
                                 '1000 kg', // Atur nominal berat di sini
-                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 10),
                               // Tambahkan konten berat sampah per tahun disini
@@ -155,18 +174,24 @@ class BerandaPage extends StatelessWidget {
                         children: [
                           Text(
                             'Aktivitas',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
                           ),
-                          SizedBox(height: 10),
-                         
+                          SizedBox(height: 5),
                         ],
                       ),
                     ),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                       Container(
+                    Center(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Berada_Kegiatan()),
+                          );
+                        },
+                        child: Container(
                           width: MediaQuery.of(context).size.width * 0.9,
                           height: 120,
                           padding: EdgeInsets.all(20),
@@ -182,18 +207,36 @@ class BerandaPage extends StatelessWidget {
                                 width: 70, // Sesuaikan lebar gambar
                                 height: 70, // Sesuaikan tinggi gambar
                               ),
-                              SizedBox(width: 20), // Spasi antara gambar dan teks
+                              SizedBox(
+                                  width: 20), // Spasi antara gambar dan teks
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Per-Bulan',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    'Unggah Kegiatan',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(height: 5),
-                                  Text(
-                                    '500 kg', // Atur nominal berat di sini
-                                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Unggah Kegiatan di TPST\n',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.black),
+                                        ),
+                                        TextSpan(
+                                          text: 'Kartoharjo',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(height: 10),
                                   // Tambahkan konten berat sampah per bulan disini
@@ -202,13 +245,18 @@ class BerandaPage extends StatelessWidget {
                             ],
                           ),
                         ),
-
-                      ],
+                      ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                       Container(
+
+                    Center(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Berada_Pupuk()),
+                          );
+                        },
+                        child: Container(
                           width: MediaQuery.of(context).size.width * 0.9,
                           height: 120,
                           padding: EdgeInsets.all(20),
@@ -224,18 +272,36 @@ class BerandaPage extends StatelessWidget {
                                 width: 70, // Sesuaikan lebar gambar
                                 height: 70, // Sesuaikan tinggi gambar
                               ),
-                              SizedBox(width: 20), // Spasi antara gambar dan teks
+                              SizedBox(
+                                  width: 20), // Spasi antara gambar dan teks
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Per-Bulan',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    'Unggah Stok Pupuk',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(height: 5),
-                                  Text(
-                                    '500 kg', // Atur nominal berat di sini
-                                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Unggah Stok Pupuk di TPST\n',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.black),
+                                        ),
+                                        TextSpan(
+                                          text: 'Kartoharjo',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(height: 10),
                                   // Tambahkan konten berat sampah per bulan disini
@@ -244,9 +310,9 @@ class BerandaPage extends StatelessWidget {
                             ],
                           ),
                         ),
-
-                      ],
+                      ),
                     ),
+
                     // Tempatkan konten aktivitas di sini
                   ],
                 ),
