@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kare/Submenu/Akun_GantiPassword.dart';
+import 'package:kare/APIService.dart';
 
 import 'Akun_DataAdmin.dart';
 
@@ -13,6 +14,14 @@ class Akun_TambahAkun extends StatefulWidget {
 class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+
+  final APIService apiService = APIService();
+
+  TextEditingController Emailcontroller = TextEditingController();
+  TextEditingController Namacontroller = TextEditingController();
+  TextEditingController Passwordcontroller = TextEditingController();
+  TextEditingController Alamatcontroller = TextEditingController();
+  TextEditingController NoTelpcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,26 +39,25 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
               ),
             ),
             PopupMenuButton<String>(
-            onSelected: (value) {
-              // Tambahkan logika untuk setiap opsi yang dipilih di sini
-              print(value);
-              if (value == 'Data Admin') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DataAdminPage()),
-                );
-              }
-            },
-            itemBuilder: (BuildContext context) {
-              return ['Data Admin'].map((String choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          ),
-
+              onSelected: (value) {
+                // Tambahkan logika untuk setiap opsi yang dipilih di sini
+                print(value);
+                if (value == 'Data Admin') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DataAdminPage()),
+                  );
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return ['Data Admin'].map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList();
+              },
+            ),
           ],
         ),
         leading: IconButton(
@@ -86,6 +94,7 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
                     ),
                     SizedBox(height: 30),
                     TextField(
+                      controller: Emailcontroller,
                       decoration: InputDecoration(
                         labelText: 'Email',
                         border: OutlineInputBorder(),
@@ -98,6 +107,7 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
                     ),
                     SizedBox(height: 15),
                     TextField(
+                      controller: Namacontroller,
                       decoration: InputDecoration(
                         labelText: 'Nama',
                         border: OutlineInputBorder(),
@@ -110,6 +120,7 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
                     ),
                     SizedBox(height: 15),
                     TextField(
+                      controller: NoTelpcontroller,
                       decoration: InputDecoration(
                         labelText: 'No. Handphone',
                         border: OutlineInputBorder(),
@@ -122,6 +133,7 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
                     ),
                     SizedBox(height: 15),
                     TextField(
+                      controller: Alamatcontroller,
                       decoration: InputDecoration(
                         labelText: 'Alamat',
                         border: OutlineInputBorder(),
@@ -134,6 +146,7 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
                     ),
                     SizedBox(height: 15),
                     TextField(
+                      controller: Passwordcontroller,
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
                         labelText: 'Password',
@@ -181,9 +194,10 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
                       style: TextStyle(color: Colors.black),
                     ),
                     SizedBox(height: 15),
-                    
+
                     ElevatedButton(
                       onPressed: () {
+                        _tambahAdmin();
                         // Tambahkan logika untuk menyimpan data admin
                       },
                       style: ElevatedButton.styleFrom(
@@ -210,10 +224,27 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
       ),
     );
   }
-}
 
-void main() {
-  runApp(MaterialApp(
-    home: Akun_TambahAkun(),
-  ));
+  void _tambahAdmin() {
+    String email = Emailcontroller.text;
+    String nama_user = Namacontroller.text;
+    String password = Passwordcontroller.text;
+    String alamat_user = Alamatcontroller.text;
+    String notelp_user = NoTelpcontroller.text;
+
+    // Validasi data admin di sini jika diperlukan
+
+    // Memanggil fungsi TambahAkun dari APIService
+    apiService.TambahAkun(email, password, nama_user, alamat_user, notelp_user)
+      .then((response) {
+        // Handle respon dari server sesuai kebutuhan
+        print(response);
+        // Tampilkan pesan sukses atau lakukan tindakan lain yang sesuai
+      })
+      .catchError((error) {
+        // Handle kesalahan yang mungkin terjadi
+        print('Error: $error');
+        // Tampilkan pesan kesalahan kepada pengguna jika diperlukan
+      });
+  }
 }
