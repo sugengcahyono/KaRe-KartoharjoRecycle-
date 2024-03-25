@@ -19,7 +19,7 @@ class _MyWidgetState extends State<MyWidget> {
   final List<Widget> _pages = [
     BerandaPage(), // Contoh halaman Beranda
     Tabungan(), // Contoh halaman Tabungan
-    Kunjungan(), // Contoh halaman Kunjungan
+    KunjunganScreen(), // Contoh halaman Kunjungan
     Akun(), // Contoh halaman Akun
   ];
 

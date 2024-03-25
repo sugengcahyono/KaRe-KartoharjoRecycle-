@@ -235,7 +235,7 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
     // Validasi data admin di sini jika diperlukan
 
     // Memanggil fungsi TambahAkun dari APIService
-    apiService.TambahAkun(email, password, nama_user, alamat_user, notelp_user)
+    apiService.tambahAdmin2(email, password, nama_user, alamat_user, notelp_user)
       .then((response) {
         // Handle respon dari server sesuai kebutuhan
         print(response);
