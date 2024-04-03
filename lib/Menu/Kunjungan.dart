@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kare/Submenu/Kunjungan_DetailPengunjung.dart';
 
 class KunjunganScreen extends StatefulWidget {
   const KunjunganScreen({Key? key}) : super(key: key);
@@ -101,7 +102,8 @@ class _KunjunganScreenState extends State<KunjunganScreen>
                   itemCount: 5, // Jumlah item yang ingin ditampilkan
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 25),
                       child: Card(
                         elevation: 2,
                         child: Padding(
@@ -132,6 +134,13 @@ class _KunjunganScreenState extends State<KunjunganScreen>
                                   ),
                                   TextButton(
                                     onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Kunjungan_DetailPengunjung()),
+                                      );
+
                                       // Action when "Selengkapnya" button is pressed
                                     },
                                     child: Text(
@@ -149,7 +158,8 @@ class _KunjunganScreenState extends State<KunjunganScreen>
                                 children: [
                                   SizedBox(height: 8),
                                   Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
                                     children: [
                                       ElevatedButton(
                                         onPressed: () {
@@ -157,7 +167,9 @@ class _KunjunganScreenState extends State<KunjunganScreen>
                                         },
                                         style: ElevatedButton.styleFrom(
                                           primary: Colors.green,
-                                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 6), // Padding
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 6), // Padding
                                         ),
                                         child: Text(
                                           "Diterima",
@@ -173,7 +185,9 @@ class _KunjunganScreenState extends State<KunjunganScreen>
                                         },
                                         style: ElevatedButton.styleFrom(
                                           primary: Colors.red,
-                                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 6), // Padding
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 6), // Padding
                                         ),
                                         child: Text(
                                           "Ditolak",

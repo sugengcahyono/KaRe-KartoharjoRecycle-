@@ -176,7 +176,44 @@ class _Akun_TambahAnggotaState extends State<Tabungan_TambahAnggota> {
     );
   }
 
-  void _tambahAnggota() {
-    // Implementasi logika untuk menambahkan anggota
+ void _tambahAnggota() async {
+    String email = Emailcontroller.text;
+    String nama_user = Namacontroller.text;
+    String password = Passwordcontroller.text;
+    String alamat_user = Alamatcontroller.text;
+    String notelp_user = NoTelpcontroller.text;
+  
+    try {
+      final response = await apiService.tambahAnggota(
+        email,
+        password,
+        nama_user,
+        alamat_user,
+        notelp_user,
+  
+      );
+
+      if (response['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data Anggota berhasil disimpan'),
+          ),
+        );
+        // Navigasi ke halaman data admin atau lainnya jika diperlukan
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal menyimpan data Anggota'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Terjadi kesalahan saat menyimpan data admin: $e'),
+        ),
+      );
+    }
   }
 }
