@@ -12,8 +12,8 @@ class APIService {
     String namaUser,
     String alamatUser,
     String noTelpUser, {
-    String fotoUser = '',
-    String kodeOTP = '', required String foto_user,
+    String fotoUser = '',required String foto_user,
+    
   }) async {
     try {
       final response = await http.post(
@@ -25,7 +25,7 @@ class APIService {
           'alamat_user': alamatUser,
           'notelp_user': noTelpUser,
           'foto_user': fotoUser,
-          'kodeotp_user': kodeOTP,
+          
         },
       );
 
