@@ -288,108 +288,118 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
 
   // Fungsi untuk menambahkan admin
   void _tambahAdmin2() async {
-    String email = Emailcontroller.text;
-    String nama_user = Namacontroller.text;
-    String password = Passwordcontroller.text;
-    String passwordkonfir = Passwordkonfircontroller.text;
-    String alamat_user = Alamatcontroller.text;
-    String notelp_user = NoTelpcontroller.text;
-    String foto_user =
-        _imageFile != null ? _imageFile!.path : ''; // Path gambar
+  String email = Emailcontroller.text;
+  String nama_user = Namacontroller.text;
+  String password = Passwordcontroller.text;
+  String passwordkonfir = Passwordkonfircontroller.text;
+  String alamat_user = Alamatcontroller.text;
+  String notelp_user = NoTelpcontroller.text;
+  File? foto_user = _imageFile; // Gunakan tipe File untuk foto
 
-    try {
-      // Validasi email
-      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Masukkan email dengan format yang benar'),
-          ),
-        );
-        return;
-      }
-
-      // Validasi nama (maksimal 50 karakter)
-      if (nama_user.isEmpty || nama_user.length > 50) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Nama harus diisi dan maksimal 50 karakter'),
-          ),
-        );
-        return;
-      }
-
-      // Validasi nomor handphone (minimal 11 dan maksimal 13 karakter)
-      if (notelp_user.length < 11 || notelp_user.length > 13) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content:
-                Text('Nomor handphone harus terdiri dari 11-13 karakter Angka'),
-          ),
-        );
-        return;
-      }
-
-      // Validasi alamat (maksimal 100 karakter)
-      if (alamat_user.length > 100) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Alamat maksimal 100 karakter'),
-          ),
-        );
-        return;
-      }
-
-      // Validasi password
-      if (password.isEmpty || password.length < 6) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Password minimal terdiri dari 6 karakter'),
-          ),
-        );
-        return;
-      }
-
-      // Validasi konfirmasi password
-      if (password != passwordkonfir) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Konfirmasi password tidak sesuai'),
-          ),
-        );
-        return;
-      }
-
-      // Jika semua validasi terpenuhi, lanjutkan dengan operasi tambah admin
-      final response = await apiService.tambahAdmin2(
-        email,
-        password,
-        nama_user,
-        alamat_user,
-        notelp_user,
-        foto_user: foto_user,
-      );
-
-      if (response['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Data admin berhasil disimpan'),
-          ),
-        );
-        // Navigasi ke halaman data admin atau lainnya jika diperlukan
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal menyimpan data admin'),
-          ),
-        );
-      }
-    } catch (e) {
+  try {
+    // Validasi email
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Terjadi kesalahan saat menyimpan data admin: $e'),
+          content: Text('Masukkan email dengan format yang benar'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi nama (maksimal 50 karakter)
+    if (nama_user.isEmpty || nama_user.length > 50) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Nama harus diisi dan maksimal 50 karakter'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi nomor handphone (minimal 11 dan maksimal 13 karakter)
+    if (notelp_user.length < 11 || notelp_user.length > 13) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('Nomor handphone harus terdiri dari 11-13 karakter Angka'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi alamat (maksimal 100 karakter)
+    if (alamat_user.length > 100) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Alamat maksimal 100 karakter'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi password
+    if (password.isEmpty || password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Password minimal terdiri dari 6 karakter'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi konfirmasi password
+    if (password != passwordkonfir) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Konfirmasi password tidak sesuai'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi apakah gambar telah dipilih
+    if (foto_user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pilih gambar profil terlebih dahulu'),
+        ),
+      );
+      return;
+    }
+
+    // Jika semua validasi terpenuhi, lanjutkan dengan operasi tambah admin
+    final response = await apiService.tambahAdmin2(
+      email,
+      password,
+      nama_user,
+      alamat_user,
+      notelp_user,
+      foto_user, // Kirim foto sebagai File
+    );
+
+    if (response['status'] == 'success') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Data admin berhasil disimpan'),
+        ),
+      );
+      // Navigasi ke halaman data admin atau lainnya jika diperlukan
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal menyimpan data admin'),
         ),
       );
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Terjadi kesalahan saat menyimpan data admin: $e'),
+      ),
+    );
   }
+}
+
 }

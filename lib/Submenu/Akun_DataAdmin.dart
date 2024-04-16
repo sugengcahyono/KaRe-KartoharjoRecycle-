@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class AdminData {
   final String name;
@@ -7,12 +9,40 @@ class AdminData {
   AdminData({required this.name, required this.email});
 }
 
-class DataAdminPage extends StatelessWidget {
-  final List<AdminData> adminList = [
-    AdminData(name: 'John Doe', email: 'john.doe@example.com'),
-    AdminData(name: 'Jane Smith', email: 'jane.smith@example.com'),
-    // Tambahkan data admin lainnya di sini sesuai kebutuhan
-  ];
+class DataAdminPage extends StatefulWidget {
+  @override
+  _DataAdminPageState createState() => _DataAdminPageState();
+}
+
+class _DataAdminPageState extends State<DataAdminPage> {
+  List<AdminData> adminList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      final response = await http.get(Uri.parse('http://192.168.0.103/kare_mobile/KareMobile_API/get_DataAdmin.php'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body)['admins'];
+        setState(() {
+          adminList = data
+              .map((item) => AdminData(
+                    name: item['nama_user'],
+                    email: item['email_user'],
+                  ))
+              .toList();
+        });
+      } else {
+        print('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +52,8 @@ class DataAdminPage extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           "Data Admin",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+          style: TextStyle(
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
@@ -32,15 +63,18 @@ class DataAdminPage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
         child: Column(
           children: <Widget>[
             ListView.builder(
-              shrinkWrap: true,
               itemCount: adminList.length,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   elevation: 3,
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  margin:
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: ListTile(
                     title: Text(
                       adminList[index].name,
@@ -49,67 +83,6 @@ class DataAdminPage extends StatelessWidget {
                     subtitle: Text(
                       adminList[index].email,
                       style: TextStyle(color: Colors.grey[700]),
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            // Tambahkan logika untuk mengedit admin
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Edit Admin'),
-                                  content: Text('Anda dapat mengedit admin di sini.'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('Tutup'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            // Tambahkan logika untuk menghapus admin
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Hapus Admin'),
-                                  content: Text('Anda yakin ingin menghapus admin ini?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('Batal'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        // Tambahkan logika untuk menghapus admin
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text(
-                                        'Hapus',
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ],
                     ),
                   ),
                 );
@@ -122,8 +95,4 @@ class DataAdminPage extends StatelessWidget {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: DataAdminPage(),
-  ));
-}
+

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../Submenu/Akun_DataAdmin.dart';
 import '../Submenu/Akun_EditProfil.dart';
 import '../Submenu/Akun_GantiPassword.dart';
 import '../Submenu/Akun_TambahAdmin.dart';
@@ -94,6 +95,36 @@ class Akun extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Ubah Password',
+                              style: TextStyle(fontSize: 16, color: Colors.black),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                 
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => DataAdminPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.green.shade100,
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.account_box, color: Colors.black),
+                          SizedBox(width: 10),
+                          Align( // Menggunakan Align untuk memposisikan teks di sebelah kiri
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Data Admin',
                               style: TextStyle(fontSize: 16, color: Colors.black),
                             ),
                           ),
