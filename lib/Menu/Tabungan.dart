@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:kare/Lupapassword.dart';
+import 'package:kare/APIService.dart'; // Impor APIService
 
 import '../Submenu/Tabungan_DetailTabungan.dart';
 import '../Submenu/Tabungan_TambahAnggota.dart';
 import '../Widget01.dart';
 
+class UserData {
+  final String name;
+
+  UserData({required this.name});
+}
 
 class Tabungan extends StatefulWidget {
   _TabunganState createState() => _TabunganState();
@@ -13,27 +19,32 @@ class Tabungan extends StatefulWidget {
 class _TabunganState extends State<Tabungan> {
   bool _isObscure = true; // State variable to toggle password visibility
 
-  List<String> anggotaList = [
-    "Anggota 1",
-    "Anggota 2",
-    "Anggota 3s",
-    "Anggota 4",
-    "Anggota 5",
-    "Anggota 6",
-    "Anggota 7",
-    "Anggota 8",
-    "Anggota 9",
-    "Anggota 10",
-    "Anggota 11",
-    "Anggota 12",
-  ]; // Contoh daftar anggota yang sudah terdaftar
+  List<UserData> userList = []; // Ubah menjadi daftar kosong
+
+  // Method untuk memuat daftar anggota dari API
+  Future<void> fetchAdminData() async {
+    try {
+      // Menggunakan APIService untuk mengambil data admin
+      List<UserData> data = await APIService().fetchUserData(); // Panggil fetchUserData() untuk mengambil data
+      setState(() {
+        userList = data;
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAdminData(); // Panggil method untuk memuat daftar anggota saat halaman dimuat
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(kToolbarHeight), // Menyesuaikan tinggi AppBar
+        preferredSize: Size.fromHeight(kToolbarHeight), // Menyesuaikan tinggi AppBar
         child: AppBar(
           automaticallyImplyLeading: false, // Menghilangkan tombol kembali
           centerTitle: true,
@@ -95,22 +106,23 @@ class _TabunganState extends State<Tabungan> {
             SizedBox(height: 10.0),
             Expanded(
               child: ListView.builder(
-                itemCount: anggotaList.length,
+                itemCount: userList.length,
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
                       Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TabunganDetailPage()),
-                          );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TabunganDetailPage(),
+                        ),
+                      );
                       // Ketika nama anggota diklik
                       // Lakukan aksi sesuai kebutuhan, misalnya tampilkan detail anggota atau lakukan tindakan lainnya
                       print('Anggota ${index + 1} diklik');
                     },
                     child: Card(
                       child: ListTile(
-                        title: Text(anggotaList[index]),
+                        title: Text(userList[index].name), // Mengakses properti name dari UserData
                         trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),

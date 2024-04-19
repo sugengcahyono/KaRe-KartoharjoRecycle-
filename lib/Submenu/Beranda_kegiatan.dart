@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 import 'Beranda_TambahKegiatan.dart';
+import '../Model/usermodel.dart'; // Impor UserModel
 
 class Berada_Kegiatan extends StatelessWidget {
-  const Berada_Kegiatan({Key? key}) : super(key: key);
+  final UserModel userModel; // Tambahkan userModel sebagai properti
+
+  const Berada_Kegiatan({Key? key, required this.userModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight), // Menyesuaikan tinggi AppBar
+        preferredSize: Size.fromHeight(kToolbarHeight),
         child: AppBar(
           centerTitle: true,
           backgroundColor: Colors.white,
@@ -22,28 +25,28 @@ class Berada_Kegiatan extends StatelessWidget {
               icon: Icon(Icons.add_a_photo_outlined),
               onPressed: () {
                 Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => UplodKegiatanPage()),
-                          );
-                
-                // Aksi untuk menambah kegiatan
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UploadKegiatanPage(userModel: userModel), // Sediakan userModel saat menavigasi
+                  ),
+                );
               },
             ),
           ],
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0), // Padding atas lebih besar
+        padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.black), // Memberikan border hitam pada TextField
+                border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0), // Padding horizontal untuk TextField
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Row(
                   children: [
                     Expanded(
@@ -52,7 +55,7 @@ class Berada_Kegiatan extends StatelessWidget {
                           hintText: 'Cari Kegiatan',
                           hintStyle: TextStyle(color: Colors.grey),
                           prefixIcon: Icon(Icons.search, color: Colors.grey),
-                          border: InputBorder.none, // Menghilangkan border internal TextField
+                          border: InputBorder.none,
                         ),
                       ),
                     ),
@@ -60,14 +63,13 @@ class Berada_Kegiatan extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 10.0), // Spasi antara pencarian dan daftar kegiatan
+            SizedBox(height: 10.0),
             Expanded(
               child: ListView(
                 children: [
-                  // Contoh daftar kegiatan (ganti dengan data yang sesuai)
                   _buildKegiatanCard(
-                    AssetImage('assets/images/foto_coba1.jpg'), // Gambar kegiatan
-                    'Kegiatan 1', // Judul kegiatan
+                    AssetImage('assets/images/foto_coba1.jpg'),
+                    'Kegiatan 1',
                   ),
                   _buildKegiatanCard(
                     AssetImage('assets/images/foto_coba1.jpg'),
@@ -77,7 +79,6 @@ class Berada_Kegiatan extends StatelessWidget {
                     AssetImage('assets/images/foto_coba1.jpg'),
                     'Kegiatan 3',
                   ),
-                  // Tambahkan kegiatan lainnya di sini sesuai kebutuhan
                 ],
               ),
             ),
@@ -97,10 +98,10 @@ class Berada_Kegiatan extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start, // Mengatur agar judul berada di atas
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 100.0, // Ukuran gambar
+                width: 100.0,
                 height: 100.0,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
@@ -110,7 +111,7 @@ class Berada_Kegiatan extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 10.0), // Spasi antara gambar dan judul
+              SizedBox(width: 10.0),
               Expanded(
                 child: Text(
                   title,

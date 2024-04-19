@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../APIService.dart';
+
 class AdminData {
   final String name;
   final String email;
@@ -15,30 +17,22 @@ class DataAdminPage extends StatefulWidget {
 }
 
 class _DataAdminPageState extends State<DataAdminPage> {
-  List<AdminData> adminList = [];
+ List<AdminData> adminList = [];
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    fetchAdminData(); // Menggunakan method baru untuk mengambil data admin
   }
 
-  Future<void> fetchData() async {
+  // Mengubah fetchData menjadi fetchAdminData
+  Future<void> fetchAdminData() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.0.103/kare_mobile/KareMobile_API/get_DataAdmin.php'));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body)['admins'];
-        setState(() {
-          adminList = data
-              .map((item) => AdminData(
-                    name: item['nama_user'],
-                    email: item['email_user'],
-                  ))
-              .toList();
-        });
-      } else {
-        print('Failed to load data');
-      }
+      // Menggunakan APIService untuk mengambil data admin
+      List<AdminData> data = await APIService().fetchAdminData();
+      setState(() {
+        adminList = data;
+      });
     } catch (e) {
       print('Error: $e');
     }

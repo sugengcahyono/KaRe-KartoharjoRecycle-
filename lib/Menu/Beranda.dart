@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:kare/Model/usermodel.dart';
 import '../Submenu/Beranda_Pupuk.dart';
 import '../Submenu/Beranda_kegiatan.dart';
 import 'Akun.dart';
 
 class BerandaPage extends StatelessWidget {
-  // Contoh nama pengguna
-  final String namaPengguna = "John";
+  final UserModel user; // Menggunakan UserModel yang diimpor
+  const BerandaPage({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class BerandaPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Hallo, $namaPengguna',
+                            'Hallo, ${user.nama}', // Menggunakan nama dari UserModel,
                             style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -188,7 +189,9 @@ class BerandaPage extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Berada_Kegiatan()),
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    Berada_Kegiatan(userModel: user)),
                           );
                         },
                         child: Container(
@@ -253,7 +256,8 @@ class BerandaPage extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Berada_Pupuk()),
+                            MaterialPageRoute(
+                                builder: (context) => Berada_Pupuk()),
                           );
                         },
                         child: Container(
