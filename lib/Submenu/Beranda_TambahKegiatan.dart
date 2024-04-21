@@ -74,7 +74,18 @@ class _UploadKegiatanPageState extends State<UploadKegiatanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Unggah Kegiatan'),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: Text(
+          "Unggah Kegiatan",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

@@ -9,6 +9,9 @@ import 'Model/usermodel.dart';
 
 class APIService {
   final String baseUrl = "http://192.168.0.103/kare_mobile/KareMobile_API";
+  final String kegiatanUrl = "http://192.168.0.103/kare_mobile/KareMobile_API/Images/Kegiatan/";
+  final String fotoUrl = "http://192.168.0.103/kare_mobile/KareMobile_API/Images/Foto/";
+  final String produkUrl = "http://192.168.0.103/kare_mobile/KareMobile_API/Images/Produk/";
 
 
 //LOGIN 
@@ -174,6 +177,7 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
     }
   }
 
+//GET DATA ANGGOTA TABUNGAN 
   Future<List<UserData>> fetchUserData() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/get_AnggotaTabungan.php'));
@@ -193,25 +197,99 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
     }
 }
 
-//AMBIL DATA KEGIATAN 
-Future<List<Map<String, dynamic>>> fetchKegiatanData() async {
+
+//GET KEGIATAN 
+Future<List<Map<String, dynamic>>> getKegiatans() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/kegiatan.php'));
+      final response = await http.get(Uri.parse('$baseUrl/get_DataKegiatan.php'));
+
       if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        if (jsonData['status'] == 'success') {
-          return List<Map<String, dynamic>>.from(jsonData['kegiatans']);
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData['status'] == 'success') {
+          return List<Map<String, dynamic>>.from(responseData['kegiatans']);
         } else {
-          throw Exception('Failed to fetch kegiatan data: ${jsonData['message']}');
+          throw Exception(responseData['message']);
         }
       } else {
-        throw Exception('Failed to fetch kegiatan data: status code ${response.statusCode}');
+        throw Exception('Failed to load kegiatans');
       }
     } catch (e) {
-      throw Exception('Failed to fetch kegiatan data: $e');
+      throw Exception('Gagal mendapatkan kegiatans: $e');
     }
   }
 
+  Future<void> updateKegiatan(int idKegiatan, String namaKegiatan, String deskripsiKegiatan, File fotoKegiatan, int idUser) async {
+  try {
+    final imageUploadRequest = http.MultipartRequest('POST', Uri.parse('$baseUrl/Edit_Kegiatan.php'));
+    imageUploadRequest.fields['id_kegiatan'] = idKegiatan.toString();
+    imageUploadRequest.fields['id_user'] = idUser.toString();
+
+    // Tambahkan data kegiatan yang berubah
+    if (namaKegiatan != null && namaKegiatan.isNotEmpty && namaKegiatan != "") {
+      imageUploadRequest.fields['nama_kegiatan'] = namaKegiatan;
+    }
+
+    if (deskripsiKegiatan != null && deskripsiKegiatan.isNotEmpty && deskripsiKegiatan != "") {
+      imageUploadRequest.fields['deskripsi_kegiatan'] = deskripsiKegiatan;
+    }
+
+    // Periksa apakah ada gambar baru yang diunggah
+    if (fotoKegiatan != null) {
+      final fileStream = http.ByteStream(Stream.castFrom(fotoKegiatan.openRead()));
+      final length = await fotoKegiatan.length();
+      final multipartFile = http.MultipartFile(
+        'foto_kegiatan',
+        fileStream,
+        length,
+        filename: fotoKegiatan.path.split('/').last,
+      );
+      imageUploadRequest.files.add(multipartFile);
+    }
+
+    final streamedResponse = await imageUploadRequest.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 200) {
+      throw Exception('Gagal memperbarui kegiatan');
+    }
+  } catch (e) {
+    throw Exception('Gagal memperbarui kegiatan: $e');
+  }
+}
+
+
+
+  Future<Map<String, dynamic>> getDetailKegiatan(int idKegiatan) async {
+  try {
+    final response = await http.get(Uri.parse('$baseUrl/get_DetailKegiatan.php?id_kegiatan=$idKegiatan'));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Gagal mendapatkan detail kegiatan');
+    }
+  } catch (e) {
+    throw Exception('Gagal mendapatkan detail kegiatan: $e');
+  }
+}
+
+
+//DELETE KEGIATAN 
+Future<void> deleteKegiatan(int idKegiatan) async {
+  final url = Uri.parse('$baseUrl/Delete_Kegiatan.php');
+  final response = await http.post(
+    url,
+    body: jsonEncode({'id_kegiatan': idKegiatan}),
+    headers: {'Content-Type': 'application/json'},
+  );
+  if (response.statusCode == 200) {
+    return;
+  } else {
+    throw Exception('Failed to delete kegiatan');
+  }
+}
+
+  
 }
 
   
