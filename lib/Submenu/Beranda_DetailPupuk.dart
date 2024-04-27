@@ -1,80 +1,169 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../APIService.dart';
-import '../Model/usermodel.dart'; // Import package image_picker
+import '../Model/usermodel.dart';
 
-class UploadPupukPage extends StatefulWidget {
+class DetailPupukPage extends StatefulWidget {
+  final String imageUrl;
+  final String title;
+  final int harga;
+  final int stok;
+  final String deskripsi;
+  final int idPupuk;
   final UserModel userModel;
-  const UploadPupukPage({Key? key, required this.userModel}) : super(key: key);
+
+  const DetailPupukPage({
+    Key? key,
+    required this.imageUrl,
+    required this.title,
+    required this.harga,
+    required this.stok,
+    required this.deskripsi,
+    required this.idPupuk,
+    required this.userModel,
+  }) : super(key: key);
 
   @override
-  _UploadPupukPageState createState() => _UploadPupukPageState();
+  _DetailPupukPageState createState() => _DetailPupukPageState();
 }
 
-class _UploadPupukPageState extends State<UploadPupukPage> {
+class _DetailPupukPageState extends State<DetailPupukPage> {
   final TextEditingController _namapupukController = TextEditingController();
   final TextEditingController _hargapupukController = TextEditingController();
   final TextEditingController _stokpupukController = TextEditingController();
-  final TextEditingController _deskripsipupukController = TextEditingController();
-  final APIService _apiService = APIService(); // Inisialisasi APIService
+  final TextEditingController _deskripsipupukController =
+      TextEditingController();
+  final APIService _apiService = APIService();
   late File _imageFile = File('');
 
-  // Metode untuk memilih gambar dari galeri
-  Future<void> _pickImage() async {
-    final imageFile = await ImagePicker().getImage(source: ImageSource.gallery);
-    if (imageFile != null) {
-      setState(() {
-        _imageFile = File(imageFile.path);
-      });
+  // Menambahkan variabel untuk menyimpan nilai awal judul dan deskripsi kegiatan
+  late String _initialnamapupuk;
+  late String _initialhargapupuk;
+  late String _initialstokpupuk;
+  late String _initialdeskripsipupuk;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set nilai awal controller saat initState
+    _namapupukController.text = widget.title;
+    _hargapupukController.text = widget.harga.toString();
+    _stokpupukController.text = widget.stok.toString();
+    _deskripsipupukController.text = widget.deskripsi;
+
+    // Simpan nilai awal judul dan deskripsi kegiatan
+    _initialnamapupuk = widget.title;
+    _initialhargapupuk = widget.harga.toString();
+    _initialstokpupuk = widget.stok.toString();
+    _initialdeskripsipupuk = widget.deskripsi;
+  }
+
+  Future<void> _updatePupuk() async {
+    if (_namapupukController.text.isEmpty ||
+        _hargapupukController.text.isEmpty ||
+        _stokpupukController.text.isEmpty ||
+        _deskripsipupukController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Harap lengkapi semua field'),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      // Menentukan gambar yang akan dikirim ke server
+      File selectedImageFile;
+      if (_imageFile.path.isNotEmpty) {
+        selectedImageFile = _imageFile;
+      } else {
+        // Jika tidak ada perubahan pada gambar, gunakan gambar sebelumnya
+        selectedImageFile = File(widget.imageUrl);
+      }
+
+      // Memanggil metode update dengan parameter yang sesuai
+      await _apiService.updatePupuk(
+        widget.idPupuk,
+        _namapupukController.text,
+        _deskripsipupukController.text,
+        // _stokpupukController.text,
+        // _hargapupukController.text,
+        selectedImageFile,
+        widget.userModel.id,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Kegiatan berhasil diperbarui'),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal memperbarui kegiatan: $e'),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
-  Future<void> _uploadPupuk() async {
-  if (_imageFile.path.isEmpty ||
-      _namapupukController.text.isEmpty ||
-      _hargapupukController.text.isEmpty ||
-      _stokpupukController.text.isEmpty ||
-      _deskripsipupukController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Harap lengkapi semua field'),
-        duration: Duration(seconds: 2),
-        backgroundColor: Colors.red,
+  Future<void> _deleteKegiatan() async {
+    // Tampilkan dialog konfirmasi
+    bool confirmDelete = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Konfirmasi'),
+        content: Text('Apakah Anda yakin ingin menghapus kegiatan ini?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Jika pengguna memilih ya, kembalikan nilai true
+              Navigator.of(context).pop(true);
+            },
+            child: Text('Ya'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Jika pengguna memilih tidak, kembalikan nilai false
+              Navigator.of(context).pop(false);
+            },
+            child: Text('Tidak'),
+          ),
+        ],
       ),
     );
-    return;
-  }
 
-  try {
-    await _apiService.uploadPupuk(
-        _namapupukController.text,
-        _deskripsipupukController.text,
-        _hargapupukController.text,
-        _stokpupukController.text,
-        _imageFile,
-        widget.userModel.id); // Gunakan id_user dari UserModel
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Pupuk berhasil diunggah'),
-        duration: Duration(seconds: 2),
-        backgroundColor: Colors.green,
-      ),
-    );
-    _resetForm();
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Gagal mengunggah Pupuk: $e'),
-        duration: Duration(seconds: 2),
-        backgroundColor: Colors.red,
-      ),
-    );
+    // Periksa apakah pengguna telah mengonfirmasi penghapusan
+    if (confirmDelete == true) {
+      try {
+        final _apiService = APIService();
+        await _apiService.deleteKegiatan(widget.idPupuk);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Kegiatan berhasil dihapus'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // Kembali ke halaman sebelumnya setelah menghapus kegiatan
+        Navigator.of(context).pop(true);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal menghapus kegiatan'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
-}
-
 
   void _resetForm() {
     setState(() {
@@ -84,6 +173,16 @@ class _UploadPupukPageState extends State<UploadPupukPage> {
       _stokpupukController.clear();
       _deskripsipupukController.clear();
     });
+  }
+
+  // Tambahkan fungsi untuk mengambil gambar dari galeri
+  Future<void> _pickImage() async {
+    final imageFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    if (imageFile != null) {
+      setState(() {
+        _imageFile = File(imageFile.path);
+      });
+    }
   }
 
   @override
@@ -201,7 +300,7 @@ class _UploadPupukPageState extends State<UploadPupukPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: ElevatedButton(
-                onPressed: _uploadPupuk, // Hapus tanda kurung ()
+                onPressed: _updatePupuk, // Hapus tanda kurung ()
                 style: ElevatedButton.styleFrom(
                   primary: Color(
                       0xFF21690F), // Ubah warna tombol menjadi hijau gelap

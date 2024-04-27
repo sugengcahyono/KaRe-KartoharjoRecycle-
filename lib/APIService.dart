@@ -8,17 +8,19 @@ import 'Menu/Tabungan.dart';
 import 'Model/usermodel.dart';
 
 class APIService {
-  final String baseUrl = "http://192.168.0.103/kare_mobile/KareMobile_API";
-  final String kegiatanUrl = "http://192.168.0.103/kare_mobile/KareMobile_API/Images/Kegiatan/";
-  final String fotoUrl = "http://192.168.0.103/kare_mobile/KareMobile_API/Images/Foto/";
-  final String produkUrl = "http://192.168.0.103/kare_mobile/KareMobile_API/Images/Produk/";
+  // final String baseUrl = "http://172.16.104.122/KaRe_Web/KareMobile_API";
+  final String baseUrl1 = "Http://192.168.0.102:8000/api/apimobilekare";  
+  
+  final String kegiatanUrl = "Http://192.168.0.102:8000/Images/Kegiatan/";  //Alamat foto Kegiatan 
+  final String fotoUrl = "Http://192.168.0.103:8000/Images/Foto/";  //Alamat foto User 
+  final String produkUrl = "Http://192.168.0.102:8000/Images/Produk/";  //Alamat foto Produk/pupuk 
 
 
 //LOGIN 
 Future<UserModel> login(String email, String password) async {
   try {
     final response = await http.post(
-      Uri.parse('$baseUrl/Mobile_Login.php'),
+      Uri.parse('$baseUrl1/login'),
       body: {
         'email_user': email,
         'password_user': password,
@@ -52,7 +54,7 @@ Future<UserModel> login(String email, String password) async {
 
 //UPLOAD DATA KEGIATAN
 Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int idUser) async {
-  var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/TambahKegiatan.php'));
+  var request = http.MultipartRequest('POST', Uri.parse('$baseUrl1/UploadKegiatan'));
   request.fields['nama_kegiatan'] = judul;
   request.fields['deskripsi_kegiatan'] = deskripsi;
   request.fields['id_user'] = idUser.toString(); // Gunakan id_user yang diterima sebagai string
@@ -80,7 +82,7 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
 ) async {
   try {
     // Buat request multipart
-    var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/TambahAdmin.php'));
+    var request = http.MultipartRequest('POST', Uri.parse('$baseUrl1/TambahAdmin'));
     
     // Tambahkan data biasa
     request.fields['email_user'] = email;
@@ -131,7 +133,7 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/TambahAnggota.php'),
+        Uri.parse('$baseUrl1/TambahAnggota'),
         body: {
           'email_user': email,
           'password_user': password,
@@ -160,7 +162,7 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
 //AMBIL DATA ADMIN 
   Future<List<AdminData>> fetchAdminData() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/get_DataAdmin.php'));
+      final response = await http.get(Uri.parse('$baseUrl1/get_DataAdmin'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body)['admins'];
         return data
@@ -180,7 +182,7 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
 //GET DATA ANGGOTA TABUNGAN 
   Future<List<UserData>> fetchUserData() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/get_AnggotaTabungan.php'));
+      final response = await http.get(Uri.parse('$baseUrl1/get_AnggotaTabungan'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body)['users']; // Ubah 'admins' menjadi 'users'
         return data
@@ -201,7 +203,7 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
 //GET KEGIATAN 
 Future<List<Map<String, dynamic>>> getKegiatans() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/get_DataKegiatan.php'));
+      final response = await http.get(Uri.parse('$baseUrl1/getKegiatan'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
@@ -220,7 +222,7 @@ Future<List<Map<String, dynamic>>> getKegiatans() async {
 
   Future<void> updateKegiatan(int idKegiatan, String namaKegiatan, String deskripsiKegiatan, File fotoKegiatan, int idUser) async {
   try {
-    final imageUploadRequest = http.MultipartRequest('POST', Uri.parse('$baseUrl/Edit_Kegiatan.php'));
+    final imageUploadRequest = http.MultipartRequest('POST', Uri.parse('$baseUrl1/updateKegiatan'));
     imageUploadRequest.fields['id_kegiatan'] = idKegiatan.toString();
     imageUploadRequest.fields['id_user'] = idUser.toString();
 
@@ -261,7 +263,7 @@ Future<List<Map<String, dynamic>>> getKegiatans() async {
 
   Future<Map<String, dynamic>> getDetailKegiatan(int idKegiatan) async {
   try {
-    final response = await http.get(Uri.parse('$baseUrl/get_DetailKegiatan.php?id_kegiatan=$idKegiatan'));
+    final response = await http.post(Uri.parse('$baseUrl1/getDetailKegiatan?id_kegiatan=$idKegiatan'));
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
@@ -274,9 +276,10 @@ Future<List<Map<String, dynamic>>> getKegiatans() async {
 }
 
 
+
 //DELETE KEGIATAN 
 Future<void> deleteKegiatan(int idKegiatan) async {
-  final url = Uri.parse('$baseUrl/Delete_Kegiatan.php');
+  final url = Uri.parse('$baseUrl1/DeleteKegiatan');
   final response = await http.post(
     url,
     body: jsonEncode({'id_kegiatan': idKegiatan}),
@@ -289,8 +292,105 @@ Future<void> deleteKegiatan(int idKegiatan) async {
   }
 }
 
-  
+
+Future<List<Map<String, dynamic>>> getProduks() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl1/getAllProduk'));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData['status'] == 'success') {
+          return List<Map<String, dynamic>>.from(responseData['produks']);
+        } else {
+          throw Exception(responseData['message']);
+        }
+      } else {
+        throw Exception('Failed to load produks');
+      }
+    } catch (e) {
+      throw Exception('Gagal mendapatkan produks: $e');
+    }
+  }
+
+  Future<void> uploadPupuk(String namaPupuk, String deskripsi, String hargaPupuk, String stokPupuk, File imageFile, int idUser) async {
+    var request = http.MultipartRequest('POST', Uri.parse('$baseUrl1/UploadProduk'));
+    request.fields['nama_produk'] = namaPupuk;
+    request.fields['deskripsi_produk'] = deskripsi;
+    request.fields['harga_produk'] = hargaPupuk;
+    request.fields['stok_produk'] = stokPupuk;
+    request.fields['id_user'] = idUser.toString();
+
+    var pic = await http.MultipartFile.fromPath('foto_produk', imageFile.path);
+    request.files.add(pic);
+
+    var response = await request.send();
+
+    if (response.statusCode != 200) {
+      throw Exception('Gagal mengunggah pupuk');
+    }
+  }
+
+
+  Future<Map<String, dynamic>> getDetailPupuk(int idPupuk) async {
+  try {
+    final response = await http.post(Uri.parse('$baseUrl1/getDetailPupuk?id_produk=$idPupuk'));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Gagal mendapatkan detail pupuk');
+    }
+  } catch (e) {
+    throw Exception('Gagal mendapatkan detail pupuk: $e');
+  }
 }
+
+Future<void> updatePupuk(int idPupuk, String namaPupuk, String deskripsiPupuk, File fotoPupuk, int idUser) async {
+  try {
+    final imageUploadRequest = http.MultipartRequest('POST', Uri.parse('$baseUrl1/updatePupuk'));
+    imageUploadRequest.fields['id_produk'] = idPupuk.toString();
+    imageUploadRequest.fields['id_user'] = idUser.toString();
+
+    // Tambahkan data pupuk yang berubah
+    if (namaPupuk != null && namaPupuk.isNotEmpty && namaPupuk != "") {
+      imageUploadRequest.fields['nama_produk'] = namaPupuk;
+    }
+
+    if (deskripsiPupuk != null && deskripsiPupuk.isNotEmpty && deskripsiPupuk != "") {
+      imageUploadRequest.fields['deskripsi_produk'] = deskripsiPupuk;
+    }
+
+    // Periksa apakah ada gambar baru yang diunggah
+    if (fotoPupuk != null) {
+      final fileStream = http.ByteStream(Stream.castFrom(fotoPupuk.openRead()));
+      final length = await fotoPupuk.length();
+      final multipartFile = http.MultipartFile(
+        'foto_produk',
+        fileStream,
+        length,
+        filename: fotoPupuk.path.split('/').last,
+      );
+      imageUploadRequest.files.add(multipartFile);
+    }
+
+    final streamedResponse = await imageUploadRequest.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 200) {
+      throw Exception('Gagal memperbarui pupuk');
+    }
+  } catch (e) {
+    throw Exception('Gagal memperbarui pupuk: $e');
+  }
+}
+
+
+
+}
+
+
+  
+
 
   
 

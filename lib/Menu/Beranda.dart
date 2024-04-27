@@ -257,7 +257,8 @@ class BerandaPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Berada_Pupuk()),
+                                builder: (context) =>
+                                    BeradaPupuk(userModel: user)),
                           );
                         },
                         child: Container(

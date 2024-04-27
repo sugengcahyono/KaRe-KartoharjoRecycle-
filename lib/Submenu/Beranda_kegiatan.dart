@@ -62,24 +62,39 @@ class _Berada_KegiatanState extends State<Berada_Kegiatan> {
   }
 
   void _navigateToDetailKegiatan(int idKegiatan) async {
+  try {
     final detailKegiatan = await apiService.getDetailKegiatan(idKegiatan);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DetailKegiatanPage(
-          idKegiatan: idKegiatan,
-          title: detailKegiatan['nama_kegiatan'],
-          deskripsi: detailKegiatan['deskripsi_kegiatan'],
-          imageUrl:
-              '${apiService.kegiatanUrl}${detailKegiatan['foto_kegiatan']}',
-          userModel: widget.userModel,
+    if (detailKegiatan['status'] == 'success') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailKegiatanPage(
+            idKegiatan: idKegiatan,
+            title: detailKegiatan['data']['nama_kegiatan'],
+            deskripsi: detailKegiatan['data']['deskripsi_kegiatan'],
+            imageUrl:
+                '${apiService.kegiatanUrl}${detailKegiatan['data']['foto_kegiatan']}',
+            userModel: widget.userModel,
+          ),
         ),
+      ).then((value) {
+        // Panggil getKegiatans untuk memperbarui tampilan setelah mengedit kegiatan
+        getKegiatans();
+      });
+    } else {
+      throw Exception(detailKegiatan['message']); // Throw exception jika gagal mendapatkan kegiatan
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Gagal mendapatkan detail kegiatan: $e'),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
       ),
-    ).then((value) {
-      // Panggil getKegiatans untuk memperbarui tampilan setelah mengedit kegiatan
-      getKegiatans();
-    });
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
