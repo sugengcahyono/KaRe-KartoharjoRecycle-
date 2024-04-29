@@ -10,6 +10,8 @@ class MyWidget extends StatefulWidget {
   
   final UserModel user; // Tambahkan parameter user
   const MyWidget({Key? key, required this.user}) : super(key: key);
+  
+  
 
   @override
   State<MyWidget> createState() => _MyWidgetState();
@@ -25,7 +27,7 @@ class _MyWidgetState extends State<MyWidget> {
       BerandaPage(user: widget.user), // Gunakan user dari widget induk
       Tabungan(),
       KunjunganScreen(),
-      Akun(),
+      Akun(user: widget.user),
     ];
   }
 

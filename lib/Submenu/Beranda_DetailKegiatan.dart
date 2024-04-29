@@ -114,7 +114,7 @@ class _DetailKegiatanPageState extends State<DetailKegiatanPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Silahkan update gambar '),
+          content: Text('Silahkan gambarupdate  '),
           duration: Duration(seconds: 2),
           backgroundColor: Colors.red,
         ),
@@ -123,59 +123,56 @@ class _DetailKegiatanPageState extends State<DetailKegiatanPage> {
   }
 
   Future<void> _deleteKegiatan() async {
-  // Tampilkan dialog konfirmasi
-  bool confirmDelete = await showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Konfirmasi'),
-      content: Text('Apakah Anda yakin ingin menghapus kegiatan ini?'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            // Jika pengguna memilih ya, kembalikan nilai true
-            Navigator.of(context).pop(true);
-          },
-          child: Text('Ya'),
-        ),
-        TextButton(
-          onPressed: () {
-            // Jika pengguna memilih tidak, kembalikan nilai false
-            Navigator.of(context).pop(false);
-          },
-          child: Text('Tidak'),
-        ),
-      ],
-    ),
-  );
+    // Tampilkan dialog konfirmasi
+    bool confirmDelete = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Konfirmasi'),
+        content: Text('Apakah Anda yakin ingin menghapus kegiatan ini?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Jika pengguna memilih ya, kembalikan nilai true
+              Navigator.of(context).pop(true);
+            },
+            child: Text('Ya'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Jika pengguna memilih tidak, kembalikan nilai false
+              Navigator.of(context).pop(false);
+            },
+            child: Text('Tidak'),
+          ),
+        ],
+      ),
+    );
 
-  // Periksa apakah pengguna telah mengonfirmasi penghapusan
-  if (confirmDelete == true) {
-    try {
-      final _apiService = APIService();
-      await _apiService.deleteKegiatan(widget.idKegiatan);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Kegiatan berhasil dihapus'),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.green,
-        ),
-      );
-      // Kembali ke halaman sebelumnya setelah menghapus kegiatan
-      Navigator.of(context).pop(true);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal menghapus kegiatan'),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
-      );
+    // Periksa apakah pengguna telah mengonfirmasi penghapusan
+    if (confirmDelete == true) {
+      try {
+        final _apiService = APIService();
+        await _apiService.deleteKegiatan(widget.idKegiatan);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Kegiatan berhasil dihapus'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // Kembali ke halaman sebelumnya setelah menghapus kegiatan
+        Navigator.of(context).pop(true);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal menghapus kegiatan'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
-}
-
-
-
 
   void _resetForm() {
     setState(() {
@@ -199,26 +196,25 @@ class _DetailKegiatanPageState extends State<DetailKegiatanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  centerTitle: true,
-  backgroundColor: Colors.white,
-  title: Text(
-    "Detail Kegiatan",
-    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-  ),
-  leading: IconButton(
-    icon: Icon(Icons.arrow_back),
-    onPressed: () {
-      Navigator.of(context).pop();
-    },
-  ),
-  actions: [
-    IconButton(
-      icon: Icon(Icons.delete),
-      onPressed: _deleteKegiatan,
-    ),
-  ],
-),
-
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: Text(
+          "Detail Kegiatan",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: _deleteKegiatan,
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -278,17 +274,15 @@ class _DetailKegiatanPageState extends State<DetailKegiatanPage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text(
-                    'Simpan Perubahan',
-                    style: TextStyle(
+                child: Text(
+                  'Simpan Perubahan',
+                  style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
                       color: Colors.white,
-                    ),
-                  ),
+                      fontSize: 20 // Ubah warna teks menjadi putih
+                      ),
                 ),
+                
               ),
             ],
           ),

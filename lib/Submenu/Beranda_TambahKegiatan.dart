@@ -151,9 +151,7 @@ class _UploadKegiatanPageState extends State<UploadKegiatanPage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text(
+                child: Text(
                     'Unggah',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -161,7 +159,7 @@ class _UploadKegiatanPageState extends State<UploadKegiatanPage> {
                       color: Colors.white,
                     ),
                   ),
-                ),
+                
               ),
             ],
           ),

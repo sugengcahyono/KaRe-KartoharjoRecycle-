@@ -60,58 +60,78 @@ class _DetailPupukPageState extends State<DetailPupukPage> {
   }
 
   Future<void> _updatePupuk() async {
-    if (_namapupukController.text.isEmpty ||
-        _hargapupukController.text.isEmpty ||
-        _stokpupukController.text.isEmpty ||
-        _deskripsipupukController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Harap lengkapi semua field'),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    try {
-      // Menentukan gambar yang akan dikirim ke server
-      File selectedImageFile;
-      if (_imageFile.path.isNotEmpty) {
-        selectedImageFile = _imageFile;
-      } else {
-        // Jika tidak ada perubahan pada gambar, gunakan gambar sebelumnya
-        selectedImageFile = File(widget.imageUrl);
-      }
-
-      // Memanggil metode update dengan parameter yang sesuai
-      await _apiService.updatePupuk(
-        widget.idPupuk,
-        _namapupukController.text,
-        _deskripsipupukController.text,
-        // _stokpupukController.text,
-        // _hargapupukController.text,
-        selectedImageFile,
-        widget.userModel.id,
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Kegiatan berhasil diperbarui'),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal memperbarui kegiatan: $e'),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+  if (_namapupukController.text.isEmpty ||
+      _hargapupukController.text.isEmpty ||
+      _stokpupukController.text.isEmpty ||
+      _deskripsipupukController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Harap lengkapi semua field'),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
   }
+
+  // Periksa apakah gambar diupdate atau tidak
+  if (_imageFile.path.isEmpty && widget.imageUrl == '') {
+    // Jika tidak ada gambar yang dipilih dan gambar sebelumnya tidak ada,
+    // tampilkan notifikasi bahwa gambar harus diupdate
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Gambar harus diupdate'),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
+  }
+
+  try {
+    // Menentukan gambar yang akan dikirim ke server
+    File selectedImageFile;
+    if (_imageFile.path.isNotEmpty) {
+      selectedImageFile = _imageFile;
+    } else {
+      // Jika tidak ada perubahan pada gambar, gunakan gambar sebelumnya
+      selectedImageFile = File(widget.imageUrl);
+    }
+
+    // Konversi teks menjadi bilangan bulat
+    int stokPupuk = int.parse(_stokpupukController.text);
+    int hargaPupuk = int.parse(_hargapupukController.text);
+
+    // Memanggil metode update dengan parameter yang sesuai
+    
+    await _apiService.updatePupuk(
+      widget.idPupuk,
+      _namapupukController.text,
+      hargaPupuk,
+      stokPupuk,
+      _deskripsipupukController.text,
+      selectedImageFile,
+      widget.userModel.id,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Kegiatan berhasil diperbarui'),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.green,
+      ),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Gambar harus diupdate'),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
 
   Future<void> _deleteKegiatan() async {
     // Tampilkan dialog konfirmasi
@@ -143,10 +163,10 @@ class _DetailPupukPageState extends State<DetailPupukPage> {
     if (confirmDelete == true) {
       try {
         final _apiService = APIService();
-        await _apiService.deleteKegiatan(widget.idPupuk);
+        await _apiService.deletePupuk(widget.idPupuk);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Kegiatan berhasil dihapus'),
+            content: Text('Pupuk berhasil dihapus'),
             duration: Duration(seconds: 2),
             backgroundColor: Colors.green,
           ),
@@ -192,15 +212,21 @@ class _DetailPupukPageState extends State<DetailPupukPage> {
         centerTitle: true,
         backgroundColor: Colors.white,
         title: Text(
-          "Unggah Pupuk",
+          "Detail Pupuk",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: _deleteKegiatan,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -214,15 +240,13 @@ class _DetailPupukPageState extends State<DetailPupukPage> {
                   height: 200,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
-                    borderRadius:
-                        BorderRadius.circular(10), // Mengatur sudut bulat kotak
+                    borderRadius: BorderRadius.circular(10),
                     boxShadow: [
-                      // Menambahkan bayangan lembut
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 3,
                         blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
+                        offset: Offset(0, 3),
                       ),
                     ],
                   ),
@@ -231,14 +255,9 @@ class _DetailPupukPageState extends State<DetailPupukPage> {
                           _imageFile,
                           fit: BoxFit.cover,
                         )
-                      : Center(
-                          child: Text(
-                            'Unggah Foto',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      : Image.network(
+                          widget.imageUrl,
+                          fit: BoxFit.cover,
                         ),
                 ),
               ),
@@ -311,7 +330,7 @@ class _DetailPupukPageState extends State<DetailPupukPage> {
                   ),
                 ),
                 child: Text(
-                  'Unggah',
+                  'Simpan Perubahan',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
