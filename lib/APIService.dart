@@ -1,21 +1,259 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:kare/Lupapassword.dart';
 import 'package:kare/Submenu/Akun_DataAdmin.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http_parser/http_parser.dart';
 
 import 'Menu/Tabungan.dart';
 import 'Model/usermodel.dart';
+import 'Submenu/Akun_DataAnggota.dart';
 
 class APIService {
   // final String baseUrl = "http://172.16.104.122/KaRe_Web/KareMobile_API";
-  final String baseUrl1 = "Http://192.168.0.102:8000/api/apimobilekare";  
+  final String baseUrl1 = "Http://192.168.0.105:8000/api/apimobilekare";  
   
-  final String kegiatanUrl = "Http://192.168.0.102:8000/Images/Kegiatan/";  //Alamat foto Kegiatan 
-  final String fotoUrl = "Http://192.168.0.102:8000/Images/Foto/";  //Alamat foto User 
-  final String produkUrl = "Http://192.168.0.102:8000/Images/Produk/";  //Alamat foto Produk/pupuk 
+  final String kegiatanUrl = "Http://192.168.0.105:8000/Images/Kegiatan/";  //Alamat foto Kegiatan 
+  final String fotoUrl = "Http://192.168.0.105:8000/Images/Foto/";  //Alamat foto User 
+  final String produkUrl = "Http://192.168.0.105:8000/Images/Produk/";  //Alamat foto Produk/pupuk 
 
+
+Future<List<dynamic>> getRiwayatKunjungan(int bulan, int tahun) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$baseUrl1/getRiwayatKunjungan'),
+      body: {
+        'bulan': bulan.toString(),
+        'tahun': tahun.toString(),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['kunjungan'] != null) {
+        return responseData['kunjungan'];
+      }
+    }
+    // Return an empty list if no data is available or request fails
+    return [];
+  } catch (e) {
+    // Handle any errors during the API call
+    print('Error fetching kunjungan data: $e');
+    return [];
+  }
+}
+
+
+
+// Fungsi untuk memeriksa email pengguna dan mengirim OTP jika terdaftar dan levelnya adalah admin
+  Future<Map<String, dynamic>> checkEmail(String email) async {
+    var url = '$baseUrl1/checkEmail';
+    
+    try {
+      var response = await http.post(Uri.parse(url), body: {'email_user': email});
+      
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return {'success': true, 'data': data};
+      } else {
+        var error = jsonDecode(response.body)['message'];
+        return {'success': false, 'error': error};
+      }
+    } catch (e) {
+      return {'success': false, 'error': 'Terjadi kesalahan: $e'};
+    }
+  }
+
+  Future<Map<String, dynamic>> updatePassword(String email, String newPassword) async {
+    final String apiUrl = '$baseUrl1/lupapassword';
+
+    final Map<String, dynamic> requestData = {
+      'email': Lupapassword.Email,
+      'new_password': newPassword,
+    };
+
+print("Passwordnya = ${newPassword}");
+print("emailnya = ${Lupapassword.Email}");
+    final http.Response response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(requestData),
+    );
+print(response.body);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      
+      throw Exception('Failed to update password: ${response.reasonPhrase}');
+    }
+  }
+
+
+// Future<http.Response> sendOtp(String email) async {
+//     var url = Uri.parse('$baseUrl1/send-otp');
+//     return await http.post(
+//       url,
+//       body: {'email': email},
+//     );
+//   }
+
+//   Future<http.Response> verifikasiOtp(String otp) async {
+//     var url = Uri.parse('$baseUrl1/verifyOtp');
+//     return await http.post(
+//       url,
+//       body: {'otp': otp},
+//     );
+//   }
+
+ Future<void> terimaKunjungan(String idKunjungan) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl1/terimaKunjungan'),
+      body: {'id_kunjungan': idKunjungan},
+    );
+
+    if (response.statusCode == 200) {
+      print('Kunjungan diterima');
+    } else {
+      throw Exception('Gagal menerima kunjungan');
+    }
+  }
+
+  Future<void> tolakKunjungan(String idKunjungan, String alasanTolak) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl1/tolakKunjungan'),
+      body: {'id_kunjungan': idKunjungan, 'alasanstatus_kunjungan': alasanTolak}, // Ubah alasan_tolak menjadi alasanstatus_kunjungan
+    );
+
+    if (response.statusCode == 200) {
+      print('Kunjungan ditolak');
+    } else {
+      throw Exception('Gagal menolak kunjungan');
+    }
+  }
+
+
+Future<List<dynamic>> getKunjunganDiajukan() async {
+    final response = await http.post(Uri.parse('$baseUrl1/KunjunganDiajukan'));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      return jsonData['data'];
+    } else {
+      throw Exception('Failed to load kunjungan diajukan');
+    }
+  }
+
+  Future<List<dynamic>> getKunjunganDitolak() async {
+    final response = await http.post(Uri.parse('$baseUrl1/KunjunganDitolak'));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      return jsonData['data'];
+    } else {
+      throw Exception('Failed to load kunjungan diajukan');
+    }
+  }
+
+  Future<List<dynamic>> getKunjunganDiterima() async {
+    final response = await http.post(Uri.parse('$baseUrl1/KunjunganDiterima'));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      return jsonData['data'];
+    } else {
+      throw Exception('Failed to load kunjungan diajukan');
+    }
+  }
+
+Future<double> getBeratSampahPerHari() async {
+  final response = await http.post(Uri.parse('$baseUrl1/beratSampahPerHari'));
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    return double.parse(data['berat_sampah_per_hari'].toString());
+  } else {
+    throw Exception('Failed to load data');
+  }
+}
+
+
+  Future<double> getBeratSampahPerBulan() async {
+    final response = await http.post(Uri.parse('$baseUrl1/beratSampahPerBulan'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return double.parse(data['berat_sampah_per_bulan'].toString());
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<double> getBeratSampahPerTahun() async {
+    final response = await http.post(Uri.parse('$baseUrl1/beratSampahPerTahun'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return double.parse(data['berat_sampah_per_tahun'].toString());
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+
+Future<List<dynamic>> getRiwayatTabungan(int idUser, int bulan, int tahun) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl1/getRiwayatTabungan'),
+        body: {
+          'id_user': idUser.toString(),
+          'bulan': bulan.toString(),
+          'tahun': tahun.toString(),
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['tabungan'] != null) {
+          return responseData['tabungan'];
+        }
+      }
+      // Return an empty list if no data is available or request fails
+      return [];
+    } catch (e) {
+      // Handle any errors during the API call
+      print('Error fetching tabungan data: $e');
+      return [];
+    }
+  }
+
+
+Future<Map<String, dynamic>> tambahTabungan(Map<String, dynamic> requestData) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl1/tambahTabungan'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(requestData),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to add transaction');
+    }
+  }
+
+
+Future<List<Map<String, dynamic>>> getDataTabungan(int idUser) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl1/getDataTabungan'),
+      body: {'id_user': idUser.toString()},
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body)['data'] as List<dynamic>;
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 
 
 Future<Map<String, dynamic>> changePassword(int userId, String oldPassword, String newPassword) async {
@@ -131,39 +369,41 @@ Future<Map<String, dynamic>> getUserDetail(int userId) async {
 
 //LOGIN 
 Future<UserModel> login(String email, String password) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl1/login'),
-        body: {
-          'email_user': email,
-          'password_user': password,
-        },
-      );
+  try {
+    final response = await http.post(
+      Uri.parse('$baseUrl1/login'),
+      body: {
+        'email_user': email,
+        'password_user': password,
+      },
+    );
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        if (responseData['status'] == 'success') {
-          return UserModel.fromJson(responseData['data'], fotoUrl);
-        } else {
-          String errorMessage = responseData['message'];
-          // Handle specific error messages
-          if (errorMessage.contains('email')) {
-            throw Exception('Email tidak ditemukan');
-          } else if (errorMessage.contains('password')) {
-            throw Exception('Password salah');
-          } else if (errorMessage.contains('admin')) {
-            throw Exception('Anda bukan admin');
-          } else {
-            throw Exception(errorMessage);
-          }
-        }
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      if (responseData['status'] == 'success') {
+        // Ganti argumen ke-3 (otp) dengan nilai default atau sesuai kebutuhan
+        return UserModel.fromJson(responseData['data'], fotoUrl, '');
       } else {
-        throw Exception('GagalStatus code: ${response.statusCode}');
+        String errorMessage = responseData['message'];
+        // Handle specific error messages
+        if (errorMessage.contains('email')) {
+          throw Exception('Email tidak ditemukan');
+        } else if (errorMessage.contains('password')) {
+          throw Exception('Password salah');
+        } else if (errorMessage.contains('admin')) {
+          throw Exception('Anda bukan admin');
+        } else {
+          throw Exception(errorMessage);
+        }
       }
-    } catch (e) {
-      throw Exception('Gagal login: $e');
+    } else {
+      throw Exception('GagalStatus code: ${response.statusCode}');
     }
+  } catch (e) {
+    throw Exception('Gagal login: $e');
   }
+}
+
 
 
 //UPLOAD DATA KEGIATAN
@@ -293,25 +533,54 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
     }
   }
 
-//GET DATA ANGGOTA TABUNGAN 
-  Future<List<UserData>> fetchUserData() async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl1/get_AnggotaTabungan'));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body)['users']; // Ubah 'admins' menjadi 'users'
-        return data
-            .map((item) => UserData(
-                  name: item['nama_user'],
-                 
-                ))
-            .toList();
-      } else {
-        throw Exception('Failed to load data');
+  Future<List<DataAnggota>> fetchAnggotaData() async {
+  try {
+    final response = await http.get(Uri.parse('$baseUrl1/get_DataUser'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['users'];
+      List<DataAnggota> users = [];
+      for (var item in data) {
+        users.add(DataAnggota(
+          name: item['nama_user'],
+          email: item['email_user'],
+          alamat: item['alamat_user'],
+        ));
       }
-    } catch (e) {
-      throw Exception('Error: $e');
+      return users;
+    } else {
+      throw Exception('Failed to load data');
     }
+  } catch (e) {
+    throw Exception('Error: $e');
+  }
 }
+
+
+
+
+
+
+
+//GET DATA ANGGOTA TABUNGAN 
+  Future<List<Map<String, dynamic>>> fetchUserData() async {
+  try {
+    final response = await http.get(Uri.parse('$baseUrl1/get_AnggotaTabungan'));
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      if (responseData['status'] == 'success') {
+        List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(responseData['users']);
+        return users;
+      } else {
+        throw Exception(responseData['message']);
+      }
+    } else {
+      throw Exception('Failed to load data');
+    }
+  } catch (e) {
+    throw Exception('Error: $e');
+  }
+}
+
 
 
 //GET KEGIATAN 

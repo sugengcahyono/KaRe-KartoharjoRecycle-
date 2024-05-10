@@ -1,26 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:kare/GantiPassword.dart';
+import 'Model/usermodel.dart';
 
 class OtpPage extends StatefulWidget {
+  final UserModel userModel; // Terima UserModel dari halaman sebelumnya
+
+  OtpPage({required this.userModel}); // Constructor with UserModel parameter
+
   @override
   _OtpPageState createState() => _OtpPageState();
 }
 
 class _OtpPageState extends State<OtpPage> {
-  // List of controllers for OTP fields
   late List<TextEditingController> _controllers;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the list of controllers
-    _controllers = List.generate(6, (index) => TextEditingController());
+    _controllers = List.generate(4, (index) => TextEditingController());
   }
 
   @override
   void dispose() {
-    // Dispose all controllers when the widget is disposed
     _controllers.forEach((controller) => controller.dispose());
     super.dispose();
+  }
+
+  void _verifyOTP() {
+    String enteredOTP = _controllers.map((controller) => controller.text).join();
+    String sentOTP = widget.userModel.otp; // Menggunakan OTP yang tersimpan di UserModel
+
+    if (enteredOTP == sentOTP) {
+      // Jika OTP sesuai, lanjutkan ke halaman ganti password
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => GantiPassword(userModel: widget.userModel)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('OTP yang dimasukkan tidak valid. Silakan coba lagi.'),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -59,7 +83,7 @@ class _OtpPageState extends State<OtpPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(
-                6,
+                4, // 4 fields for OTP
                 (index) => SizedBox(
                   width: 50,
                   child: TextFormField(
@@ -75,12 +99,10 @@ class _OtpPageState extends State<OtpPage> {
                       ),
                     ),
                     onChanged: (value) {
-                      if (value.length == 1 && index < 5) {
-                        // Move focus to the next field if a digit is entered
+                      if (value.length == 1 && index < 3) {
                         FocusScope.of(context).nextFocus();
                       }
                       if (value.isEmpty && index > 0) {
-                        // Move focus to the previous field if backspace is pressed
                         FocusScope.of(context).previousFocus();
                       }
                     },
@@ -90,19 +112,11 @@ class _OtpPageState extends State<OtpPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Action ketika tombol "Verifikasi" diklik
-                // Collect OTP from all fields
-                String otp = '';
-                _controllers.forEach((controller) => otp += controller.text);
-                print('OTP entered: $otp');
-              },
+              onPressed: _verifyOTP, // Panggil _verifyOTP saat tombol ditekan
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFF21690F), // Ubah warna tombol menjadi hijau gelap
+                primary: Color(0xFF21690F),
                 shape: RoundedRectangleBorder(
-                  // Menyesuaikan bentuk pinggiran tombol
                   borderRadius: BorderRadius.circular(8),
-                  // Menyesuaikan tingkat kebulatan pinggiran
                 ),
               ),
               child: Text(
@@ -110,7 +124,7 @@ class _OtpPageState extends State<OtpPage> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  fontSize: 20, // Ubah warna teks menjadi putih
+                  fontSize: 20,
                 ),
               ),
             ),

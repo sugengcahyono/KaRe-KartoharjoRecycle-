@@ -3,6 +3,7 @@ import '../APIService.dart';
 import '../Login.dart';
 import '../Model/usermodel.dart';
 import '../Submenu/Akun_DataAdmin.dart';
+import '../Submenu/Akun_DataAnggota.dart';
 import '../Submenu/Akun_EditProfil.dart';
 import '../Submenu/Akun_GantiPassword.dart';
 import '../Submenu/Akun_TambahAdmin.dart';
@@ -179,6 +180,39 @@ class Akun extends StatelessWidget {
                     SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DataAnggotaPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.green.shade100,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.groups_2_rounded, color: Colors.black),
+                          SizedBox(width: 10),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Data Anggota',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.black),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
                         // Tambahkan aksi untuk tombol Tambah Admin di sini
                         Navigator.push(
                           context,
@@ -196,7 +230,7 @@ class Akun extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.supervised_user_circle,
+                          Icon(Icons.group_add,
                               color: Colors.black),
                           SizedBox(width: 10),
                           Align(
@@ -294,7 +328,7 @@ class Akun extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.person_add_disabled, color: Colors.black),
+                          Icon(Icons.person_off_sharp, color: Colors.black),
                           SizedBox(width: 10),
                           Align(
                             alignment: Alignment.centerLeft,

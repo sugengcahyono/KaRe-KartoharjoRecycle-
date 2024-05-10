@@ -1,13 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:kare/OtpPage.dart';
+import 'APIService.dart';
+import 'Model/usermodel.dart';
 
 class Lupapassword extends StatefulWidget {
+  static String Email = "";
   @override
   _LupapasswordState createState() => _LupapasswordState();
 }
 
 class _LupapasswordState extends State<Lupapassword> {
-  bool _isObscure = true; // State variable to toggle password visibility
+  final APIService _apiService = APIService();
+  TextEditingController _emailController = TextEditingController();
+  bool _isLoading = false;
+  String _errorMessage = '';
+  late UserModel _userModel;
+
+  Future<void> _sendOTP() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    var email = _emailController.text;
+Lupapassword.Email = email;
+    try {
+      var result = await _apiService.checkEmail(email);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (result != null && result['success']) {
+        _userModel = UserModel(
+          id: result['data']['id_user'] ?? 0,
+          email: result['data']['email_user'] ?? '',
+          nama: result['data']['nama_user'] ?? '',
+          alamat: result['data']['alamat_user'] ?? '',
+          noTelp: result['data']['notelp_user'] ?? '',
+          foto: result['data']['foto_user'] ?? '',
+          level: result['data']['level_user'] ?? '',
+          message: result['message'] ?? '',
+          otp: result['data']['otp'] ?? '', // Simpan OTP di UserModel
+        );
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OtpPage(userModel: _userModel)),
+        );
+      } else {
+        setState(() {
+          _errorMessage = result != null ? result['error'] : 'Failed to fetch data';
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_errorMessage),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'An error occurred: $error';
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_errorMessage),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +108,7 @@ class _LupapasswordState extends State<Lupapassword> {
             ),
             SizedBox(height: 40),
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
@@ -60,30 +126,23 @@ class _LupapasswordState extends State<Lupapassword> {
             SizedBox(height: 10),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Action ketika tombol "Selanjutnya" diklik
-                Navigator.push(
-                     // Action ketika tombol "Lupa Password" diklik
-                    context,
-                    MaterialPageRoute(builder: (context) => OtpPage()), // Ganti LupaPasswordScreen dengan nama kelas layar Anda
-                  );
-              },
+              onPressed: _isLoading ? null : _sendOTP,
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFF21690F), // Ubah warna tombol menjadi hijau gelap
+                primary: Color(0xFF21690F),
                 shape: RoundedRectangleBorder(
-                  // Menyesuaikan bentuk pinggiran tombol
                   borderRadius: BorderRadius.circular(8),
-                  // Menyesuaikan tingkat kebulatan pinggiran
                 ),
               ),
-              child: Text(
-                'Selanjutnya',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 20 // Ubah warna teks menjadi putih
+              child: _isLoading
+                  ? CircularProgressIndicator()
+                  : Text(
+                      'Selanjutnya',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
                     ),
-              ),
             ),
           ],
         ),

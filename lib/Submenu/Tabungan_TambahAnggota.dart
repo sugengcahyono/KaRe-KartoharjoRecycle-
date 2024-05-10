@@ -20,6 +20,7 @@ class _Akun_TambahAnggotaState extends State<Tabungan_TambahAnggota> {
   TextEditingController Emailcontroller = TextEditingController();
   TextEditingController Namacontroller = TextEditingController();
   TextEditingController Passwordcontroller = TextEditingController();
+  TextEditingController ConfirmPasswordcontroller = TextEditingController();
   TextEditingController Alamatcontroller = TextEditingController();
   TextEditingController NoTelpcontroller = TextEditingController();
 
@@ -76,6 +77,7 @@ class _Akun_TambahAnggotaState extends State<Tabungan_TambahAnggota> {
               SizedBox(height: 15),
               TextField(
                 controller: NoTelpcontroller,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'No. Handphone',
                   border: OutlineInputBorder(),
@@ -126,6 +128,7 @@ class _Akun_TambahAnggotaState extends State<Tabungan_TambahAnggota> {
               ),
               SizedBox(height: 15),
               TextField(
+                controller: ConfirmPasswordcontroller,
                 obscureText: !_isConfirmPasswordVisible,
                 decoration: InputDecoration(
                   labelText: 'Konfirmasi Password',
@@ -176,44 +179,115 @@ class _Akun_TambahAnggotaState extends State<Tabungan_TambahAnggota> {
     );
   }
 
- void _tambahAnggota() async {
-    String email = Emailcontroller.text;
-    String nama_user = Namacontroller.text;
-    String password = Passwordcontroller.text;
-    String alamat_user = Alamatcontroller.text;
-    String notelp_user = NoTelpcontroller.text;
+  void _tambahAnggota() async {
+  String email = Emailcontroller.text;
+  String nama_user = Namacontroller.text;
+  String password = Passwordcontroller.text;
+  String confirmPassword = ConfirmPasswordcontroller.text;
+  String alamat_user = Alamatcontroller.text;
+  String notelp_user = NoTelpcontroller.text;
   
-    try {
-      final response = await apiService.tambahAnggota(
-        email,
-        password,
-        nama_user,
-        alamat_user,
-        notelp_user,
-  
-      );
-
-      if (response['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Data Anggota berhasil disimpan'),
-          ),
-        );
-        // Navigasi ke halaman data admin atau lainnya jika diperlukan
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal menyimpan data Anggota'),
-          ),
-        );
-      }
-    } catch (e) {
+  try {
+    // Validasi email
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Terjadi kesalahan saat menyimpan data admin: $e'),
+          content: Text('Masukkan email dengan format yang benar'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi nama (minimal 3 karakter, maksimal 50 karakter, tidak boleh mengandung angka)
+    if (nama_user.length < 3 || nama_user.length > 50 || RegExp(r'\d').hasMatch(nama_user)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Nama harus terdiri dari 3-50 karakter dan tidak boleh mengandung angka'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi nomor handphone (minimal 11 dan maksimal 13 karakter)
+    if (notelp_user.length < 11 || notelp_user.length > 13) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Nomor handphone harus terdiri dari 11-13 karakter Angka'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi alamat
+    if (alamat_user.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Alamat harus diisi'),
+        ),
+      );
+      return;
+    }
+    // Validasi alamat (maksimal 100 karakter)
+    if (alamat_user.length > 100) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Alamat maksimal 100 karakter'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi password
+    if (password.isEmpty || password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Password minimal terdiri dari 6 karakter'),
+        ),
+      );
+      return;
+    }
+
+    // Validasi konfirmasi password
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Konfirmasi password tidak sesuai'),
+        ),
+      );
+      return;
+    }
+
+    // Jika semua validasi terpenuhi, lanjutkan dengan operasi tambah anggota
+    final response = await apiService.tambahAnggota(
+      email,
+      password,
+      nama_user,
+      alamat_user,
+      notelp_user,
+    );
+
+    if (response['status'] == 'success') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Data Anggota berhasil disimpan'),
+        ),
+      );
+      // Navigasi ke halaman data admin atau lainnya jika diperlukan
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal menyimpan data Anggota'),
         ),
       );
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Terjadi kesalahan saat menyimpan data admin: $e'),
+      ),
+    );
   }
+}
+
 }

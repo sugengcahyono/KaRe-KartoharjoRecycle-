@@ -1,238 +1,322 @@
 import 'package:flutter/material.dart';
-import 'Akun_DataAdmin.dart';
+import 'package:http/http.dart' as http; // Import package http
+import '../APIService.dart';
+import 'package:intl/intl.dart';
+
+import 'Tabungan_RiwayatTabungan.dart';
 
 class TabunganDetailPage extends StatefulWidget {
+  final int iduser;
+  final String namauser;
+  final String alamatuser;
+
+  TabunganDetailPage({
+    required this.iduser,
+    required this.namauser,
+    required this.alamatuser,
+  });
+
   @override
   _TabunganDetailPageState createState() => _TabunganDetailPageState();
 }
 
 class _TabunganDetailPageState extends State<TabunganDetailPage> {
-  List<Map<String, dynamic>> _data = [
-    {
-      'uraian': 'Pembelian Barang',
-      'tanggal': '12/03/2024',
-      'type': 'D',
-      'nominal': 500000,
-      'berat': 2,
-      'saldo': 1000000
-    },
-    {
-      'uraian': 'Penjualan Barang',
-      'tanggal': '13/03/2024',
-      'type': 'C',
-      'nominal': 800000,
-      'berat': 1,
-      'saldo': 1800000
-    },
-    {
-      'uraian': 'Penjualan Barang',
-      'tanggal': '13/03/2024',
-      'type': 'C',
-      'nominal': 800000,
-      'berat': 1,
-      'saldo': 1800000
-    },
-    {
-      'uraian': 'Penjualan Barang',
-      'tanggal': '13/03/2024',
-      'type': 'C',
-      'nominal': 800000,
-      'berat': 1,
-      'saldo': 1800000
-    },
-    {
-      'uraian': 'ffffffffffffffffffffffffffffffff',
-      'tanggal': '15/03/2024',
-      'type': 'C',
-      'nominal': 800000,
-      'berat': 1,
-      'saldo': 1800000
-    },
-    // Add more data as needed
-  ];
+  List<Map<String, dynamic>> _data = [];
+  bool _isLoading = true;
 
-  TextEditingController uraianController = TextEditingController();
-  TextEditingController typeController = TextEditingController();
-  TextEditingController nominalController = TextEditingController();
-  TextEditingController beratController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
 
-  final ScrollController _scrollController = ScrollController();
+  Future<void> fetchData() async {
+    try {
+      final apiService = APIService();
+      final tabunganData = await apiService.getDataTabungan(
+          widget.iduser); // Menggunakan await untuk menunggu hasil Future
+      setState(() {
+        _data = tabunganData;
+        _isLoading = false;
+      });
+    } catch (e) {
+      // Handle error jika gagal mengambil data
+      print('Error fetching data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Text(
-                "Detail Tabungan",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-            ),
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                // Tambahkan logika untuk setiap opsi yang dipilih di sini
-                print(value);
-                if (value == 'Detail Anggota') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DataAdminPage()),
-                  );
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return ['Detail Anggota'].map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          title: Text(
+            "Detail Tabungan",
+            style: TextStyle(
+                fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.list_alt_outlined),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RiwayatTabungan(
+                        idUser: widget.iduser), // Sertakan id_user
+                  ),
+                );
               },
             ),
           ],
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Nama: John Doe',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Alamat: Jalan ABC No. 123',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            Container(
-              height: 300,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: DataTable(
-                    columns: [
-                      DataColumn(label: Flexible(child: Text('Uraian'))),
-                      DataColumn(label: Text('Tanggal')),
-                      DataColumn(label: Text('Type')),
-                      DataColumn(label: Text('Nominal')),
-                      DataColumn(label: Text('Berat')),
-                      DataColumn(label: Text('Saldo')),
-                    ],
-                    rows: _data.map((item) {
-                      return DataRow(
-                        cells: [
-                          DataCell(Flexible(child: Text(item['uraian']))),
-                          DataCell(Text(item['tanggal'])),
-                          DataCell(Text(item['type'])),
-                          DataCell(Text(item['nominal'].toString())),
-                          DataCell(Text(item['berat'].toString())),
-                          DataCell(Text(item['saldo'].toString())),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: uraianController,
-                    decoration: InputDecoration(labelText: 'Uraian'),
-                    maxLines: null,
-                    maxLength: 30, // Allow unlimited lines
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: typeController,
-                    decoration: InputDecoration(labelText: 'Type (C/D)'),
-                    maxLength: 1, // Limit input to one character
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: nominalController,
-                    decoration: InputDecoration(labelText: 'Nominal'),
-                    keyboardType:
-                        TextInputType.number, // Allow numeric input only
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: beratController,
-                    decoration: InputDecoration(labelText: 'Berat (kg)'),
-                    keyboardType: TextInputType.numberWithOptions(
-                        decimal:
-                            true), // Allow numeric input with decimal point
+                  SizedBox(height: 5),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${widget.namauser}',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '${widget.alamatuser}',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      _tambahData();
-                      _scrollController.animateTo(
-                        _scrollController.position.maxScrollExtent,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeOut,
-                      );
-                    },
-                    child: Text('Tambah'),
+                  Container(
+                    height: 500,
+                    child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: DataTable(
+                            columns: [
+                              DataColumn(
+                                  label: Flexible(child: Text('Uraian'))),
+                              DataColumn(label: Text('Tanggal')),
+                              DataColumn(label: Text('Type')),
+                              DataColumn(label: Text('Nominal')),
+                              DataColumn(label: Text('Berat')),
+                              DataColumn(label: Text('Saldo')),
+                            ],
+                            rows: _data.map((item) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(Flexible(
+                                      child: Text(
+                                          item['ketsampah_tabungan'] ?? ''))),
+                                  DataCell(Text(item['tgl_tabungan'] ?? '')),
+                                  DataCell(Text(item['tipe_tabungan'] ?? '')),
+                                  DataCell(Text(item['hargasampah_tabungan']
+                                          ?.toString() ??
+                                      '')),
+                                  DataCell(Text(item['beratsampah_tabungan']
+                                          ?.toString() ??
+                                      '')),
+                                  DataCell(Text(
+                                      item['saldoakhir_tabungan']?.toString() ??
+                                          '')),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        )),
+                  ),
+                  SizedBox(height: 0),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        _showInputDialog(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF21690F),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Tambah Transaksi',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
-  void _tambahData() {
-    // Mendapatkan nilai dari input field
-    String uraian = uraianController.text;
-    String type =
-        typeController.text.toUpperCase(); // Convert input to uppercase
-    double nominal = double.tryParse(nominalController.text) ?? 0;
-    double berat = double.tryParse(beratController.text) ?? 0;
+  void _showTypeDialog(
+      BuildContext context, TextEditingController controller) async {
+    String? type = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pilih Jenis Transaksi'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text('Masuk'),
+                onTap: () {
+                  Navigator.of(context).pop('Masuk');
+                },
+              ),
+              ListTile(
+                title: Text('Keluar'),
+                onTap: () {
+                  Navigator.of(context).pop('Keluar');
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (type != null) {
+      controller.text = type;
+    }
+  }
 
-    // Menambahkan data baru ke _data list
-    setState(() {
-      _data.add({
-        'uraian': uraian,
-        'tanggal': DateTime.now().toString(),
-        'type': type,
-        'nominal': nominal,
-        'berat': berat,
-        'saldo': 0, // Isi dengan nilai default jika diperlukan
+  void _showInputDialog(BuildContext context) {
+    final uraianController = TextEditingController();
+    final typeController = TextEditingController();
+    final nominalController = TextEditingController();
+    final beratController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Tambah Transaksi'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: uraianController,
+                  decoration: InputDecoration(labelText: 'Uraian'),
+                  maxLines: null,
+                  maxLength: 30, // Allow unlimited lines
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  readOnly: true,
+                  onTap: () {
+                    _showTypeDialog(context, typeController);
+                  },
+                  controller: typeController,
+                  decoration: InputDecoration(labelText: 'Type'),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: nominalController,
+                  decoration: InputDecoration(labelText: 'Nominal'),
+                  keyboardType:
+                      TextInputType.number, // Allow numeric input only
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: beratController,
+                  decoration: InputDecoration(labelText: 'Berat (kg)'),
+                  keyboardType: TextInputType.numberWithOptions(
+                    decimal: true,
+                  ), // Allow numeric input with decimal point
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _tambahData(
+                  uraianController.text,
+                  typeController.text.toUpperCase(),
+                  double.tryParse(nominalController.text) ?? 0,
+                  double.tryParse(beratController.text) ?? 0,
+                );
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Tambah'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _tambahData(
+      String uraian, String type, double nominal, double berat) async {
+    try {
+      final apiService = APIService();
+
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formattedDate = formatter.format(DateTime.now());
+
+      final requestData = {
+        'id_user': widget.iduser,
+        'tgl_tabungan': formattedDate,
+        'ketsampah_tabungan': uraian,
+        'beratsampah_tabungan': berat,
+        'tipe_tabungan': type.toLowerCase(),
+        'hargasampah_tabungan': nominal,
+      };
+
+      final responseData = await apiService.tambahTabungan(requestData);
+
+      setState(() {
+        var saldo = responseData['saldo_akhir'] as int? ?? 0;
+        _data.add({
+          'ketsampah_tabungan': uraian,
+          'tgl_tabungan': formattedDate,
+          'tipe_tabungan': type,
+          'hargasampah_tabungan': nominal,
+          'beratsampah_tabungan': berat,
+          'saldoakhir_tabungan': saldo,
+        });
       });
 
-      // Mengosongkan input field setelah data ditambahkan
-      uraianController.clear();
-      typeController.clear();
-      nominalController.clear();
-      beratController.clear();
-    });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Transaksi berhasil ditambahkan'),
+        backgroundColor: Colors.green,
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Gagal menambahkan transaksi: $e'),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }

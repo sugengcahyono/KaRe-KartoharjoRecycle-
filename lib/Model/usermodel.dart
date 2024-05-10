@@ -10,6 +10,7 @@ class UserModel {
   final String foto;
   final String level;
   final String message;
+  final String otp;
 
   UserModel({
     required this.id,
@@ -20,9 +21,10 @@ class UserModel {
     required this.foto,
     required this.level,
     required this.message,
+    required this.otp,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json, String fotoUrl) {
+  factory UserModel.fromJson(Map<String, dynamic> json, String fotoUrl, String otp) {
     final apiService = APIService(); // Buat instance APIService
     final fotoUrl = apiService.fotoUrl; 
     return UserModel(
@@ -34,6 +36,7 @@ class UserModel {
       foto: fotoUrl + json['foto_user'], // Gabungkan fotoUrl dengan foto_user
       level: json['level_user'] ?? '',
       message: json['message'] ?? '',
+         otp: otp,
     );
   }
 }
