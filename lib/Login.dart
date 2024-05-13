@@ -31,13 +31,16 @@ class _LoginState extends State<Login> {
         setState(() {
           loggedInUser = user;
         });
+        // Reset teks pada kedua field setelah login berhasil
+        emailController.clear();
+        passwordController.clear();
         // Navigasi ke halaman beranda atau halaman selanjutnya
         Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => MyWidget(user: user),
-  ),
-);
+          context,
+          MaterialPageRoute(
+            builder: (context) => MyWidget(user: user),
+          ),
+        );
       } else {
         _showNotification('Login gagal: ${user.message}', Colors.red);
       }

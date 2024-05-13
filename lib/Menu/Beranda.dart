@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kare/Model/usermodel.dart';
 import '../APIService.dart';
 import '../Submenu/Beranda_Pupuk.dart';
+import '../Submenu/Beranda_SampahHari.dart';
 import '../Submenu/Beranda_kegiatan.dart';
 import 'Akun.dart';
 
@@ -68,63 +69,72 @@ class BerandaPage extends StatelessWidget {
                     ),
                     SizedBox(height: 25), // Spasi
                     // Container 1 - Berat Sampah per Hari
-                    Center(
-                      child: FutureBuilder<double>(
-                        future: apiService
-                            .getBeratSampahPerHari(), // Memanggil metode dengan instance apiService
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            return Container(
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              height: 120,
-                              padding: EdgeInsets.all(20),
-                              margin: EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Berat Sampah Per-Hari',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BeratSampahHari()),
+                        );
+                      },
+                      child: Center(
+                        child: FutureBuilder<double>(
+                          future: apiService.getBeratSampahPerHari(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return Container(
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height: 120,
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Berat Sampah Per-Hari',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        '${snapshot.data?.toStringAsFixed(2) ?? "N/A"} kg',
-                                        style: TextStyle(
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.bold,
+                                        SizedBox(height: 10),
+                                        Text(
+                                          '${snapshot.data?.toStringAsFixed(2) ?? "N/A"} kg',
+                                          style: TextStyle(
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Image.asset(
-                                    'assets/icons/recycle-bin.png',
-                                    width: 70,
-                                    height: 70,
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
+                                      ],
+                                    ),
+                                    Image.asset(
+                                      'assets/icons/recycle-bin.png',
+                                      width: 70,
+                                      height: 70,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       ),
                     ),
+
                     // Container 2 - Berat Sampah per Bulan
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:kare/Lupapassword.dart';
 import 'package:kare/Submenu/Akun_DataAdmin.dart';
 import 'package:uuid/uuid.dart';
@@ -12,11 +13,11 @@ import 'Submenu/Akun_DataAnggota.dart';
 
 class APIService {
   // final String baseUrl = "http://172.16.104.122/KaRe_Web/KareMobile_API";
-  final String baseUrl1 = "Http://192.168.0.105:8000/api/apimobilekare";  
+  final String baseUrl1 = "Http://172.16.106.20:8000/api/apimobilekare";  
   
-  final String kegiatanUrl = "Http://192.168.0.105:8000/Images/Kegiatan/";  //Alamat foto Kegiatan 
-  final String fotoUrl = "Http://192.168.0.105:8000/Images/Foto/";  //Alamat foto User 
-  final String produkUrl = "Http://192.168.0.105:8000/Images/Produk/";  //Alamat foto Produk/pupuk 
+  final String kegiatanUrl = "Http://172.16.106.20:8000/Images/Kegiatan/";  //Alamat foto Kegiatan 
+  final String fotoUrl = "Http://172.16.106.20:8000/Images/Foto/";  //Alamat foto User 
+  final String produkUrl = "Http://172.16.106.20:8000/Images/Produk/";  //Alamat foto Produk/pupuk 
 
 
 Future<List<dynamic>> getRiwayatKunjungan(int bulan, int tahun) async {
@@ -541,6 +542,7 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
       List<DataAnggota> users = [];
       for (var item in data) {
         users.add(DataAnggota(
+          id: item['id_user'],
           name: item['nama_user'],
           email: item['email_user'],
           alamat: item['alamat_user'],
@@ -788,6 +790,31 @@ Future<void> deletePupuk(int idPupuk) async {
     throw Exception('Failed to delete kegiatan');
   }
 }
+
+Future<List<dynamic>> getTabunganByDate(String startDate) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$baseUrl1/getTabunganByDate'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'tgl_tabungan': startDate,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['tgl_tabungan'];
+    } else {
+      throw Exception('Failed to load tabungan by date');
+    }
+  } catch (e) {
+    print('Error: $e');
+    throw e;
+  }
+}
+
+
 
 
 
