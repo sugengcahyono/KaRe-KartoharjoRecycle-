@@ -116,7 +116,7 @@ class _DetailPupukPageState extends State<DetailPupukPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Kegiatan berhasil diperbarui'),
+        content: Text('Pupuk berhasil diperbarui'),
         duration: Duration(seconds: 2),
         backgroundColor: Colors.green,
       ),
@@ -139,7 +139,7 @@ class _DetailPupukPageState extends State<DetailPupukPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Konfirmasi'),
-        content: Text('Apakah Anda yakin ingin menghapus kegiatan ini?'),
+        content: Text('Apakah Anda yakin ingin menghapus Pupuk ini?'),
         actions: [
           TextButton(
             onPressed: () {
@@ -176,7 +176,7 @@ class _DetailPupukPageState extends State<DetailPupukPage> {
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Gagal menghapus kegiatan'),
+            content: Text('Gagal menghapus Pupuk'),
             duration: Duration(seconds: 2),
             backgroundColor: Colors.red,
           ),

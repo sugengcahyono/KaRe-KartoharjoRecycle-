@@ -114,7 +114,7 @@ class _OtpPageState extends State<OtpPage> {
             ElevatedButton(
               onPressed: _verifyOTP, // Panggil _verifyOTP saat tombol ditekan
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFF21690F),
+                backgroundColor: Color(0xFF21690F),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

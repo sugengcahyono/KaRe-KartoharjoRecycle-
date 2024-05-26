@@ -123,7 +123,7 @@ class _KunjunganScreenState extends State<KunjunganScreen>
                                   vertical: 8,
                                   horizontal: 25,
                                 ),
-                                child: Card(color: Colors.green.shade100,
+                                child: Card(color: Colors.blueAccent.shade100,
                                   elevation: 2,
                                   child: Padding(
                                     padding: const EdgeInsets.all(16.0),
@@ -199,7 +199,7 @@ class _KunjunganScreenState extends State<KunjunganScreen>
                                   vertical: 8,
                                   horizontal: 25,
                                 ),
-                                child: Card(color: Colors.green.shade100,
+                                child: Card(color: Colors.red.shade100,
                                   elevation: 2,
                                   child: Padding(
                                     padding: const EdgeInsets.all(16.0),

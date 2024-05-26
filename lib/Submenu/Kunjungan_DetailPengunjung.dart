@@ -109,13 +109,15 @@ class Kunjungan_DetailPengunjung extends StatelessWidget {
                                   kunjungan['id_kunjungan'].toString());
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Kunjungan diterima'),
+                                  content: Text('Kunjungan diterima'), 
+                                  backgroundColor: Colors.green,
                                 ),
                               );
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Gagal menerima kunjungan'),
+                                  backgroundColor: Colors.red,
                                 ),
                               );
                             }
@@ -195,6 +197,7 @@ class Kunjungan_DetailPengunjung extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Kunjungan ditolak'),
+                        backgroundColor: Colors.green,
                       ),
                     );
                     Navigator.pop(context);
@@ -202,6 +205,7 @@ class Kunjungan_DetailPengunjung extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Gagal menolak kunjungan'),
+                        backgroundColor: Colors.red,
                       ),
                     );
                   }

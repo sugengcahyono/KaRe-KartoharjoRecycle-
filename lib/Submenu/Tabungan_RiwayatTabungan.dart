@@ -29,7 +29,8 @@ class _RiwayatTabunganState extends State<RiwayatTabungan> {
   }
 
   Future<void> fetchData() async {
-    final data = await _apiService.getRiwayatTabungan(widget.idUser, _selectedMonth, _selectedYear);
+    final data = await _apiService.getRiwayatTabungan(
+        widget.idUser, _selectedMonth, _selectedYear);
     setState(() {
       _riwayatTabungan = data;
     });
@@ -47,7 +48,10 @@ class _RiwayatTabunganState extends State<RiwayatTabungan> {
               backgroundColor: Colors.white,
               title: Text(
                 "Riwayat Tabungan",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
               ),
             ),
             SizedBox(height: 10),
@@ -67,7 +71,8 @@ class _RiwayatTabunganState extends State<RiwayatTabungan> {
                     12,
                     (index) => DropdownMenuItem<int>(
                       value: index + 1,
-                      child: Text('${DateFormat.MMMM().format(DateTime(2000, index + 1))}'),
+                      child: Text(
+                          '${DateFormat.MMMM().format(DateTime(2000, index + 1))}'),
                     ),
                   ),
                 ),
@@ -102,52 +107,58 @@ class _RiwayatTabunganState extends State<RiwayatTabungan> {
         ),
       ),
       body: Container(
-  height: 650,
-  child: ListView(
-    scrollDirection: Axis.horizontal,
-    children: [
-      SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-          columns: [
-            DataColumn(label: Flexible(child: Text('Uraian'))),
-            DataColumn(label: Text('Tanggal')),
-            DataColumn(label: Text('Type')),
-            DataColumn(label: Text('Nominal')),
-            DataColumn(label: Text('Berat')),
-            DataColumn(label: Text('Saldo')),
-          ],
-          rows: _riwayatTabungan != null && _riwayatTabungan!.isNotEmpty
-            ? _riwayatTabungan!.map((item) {
-              return DataRow(
-                cells: [
-                  DataCell(Flexible(
-                    child: Text(item['ketsampah_tabungan'] ?? ''),
-                  )),
-                  DataCell(Text(item['tgl_tabungan'] ?? '')),
-                  DataCell(Text(item['tipe_tabungan'] ?? '')),
-                  DataCell(Text(item['hargasampah_tabungan']?.toString() ?? '')),
-                  DataCell(Text(item['beratsampah_tabungan']?.toString() ?? '')),
-                  DataCell(Text(item['saldoakhir_tabungan']?.toString() ?? '')),
+        height: 650,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: DataTable(
+                columnSpacing: 8, // Atur jarak antar kolom
+                horizontalMargin: 12, // Atur batas horizontal
+                columns: [
+                  DataColumn(label: Text('Uraian')),
+                  DataColumn(label: Text('Tanggal')),
+                  DataColumn(label: Text('Type')),
+                  DataColumn(label: Text('Nominal')),
+                  DataColumn(label: Text('Berat')),
+                  DataColumn(label: Text('Saldo')),
                 ],
-              );
-            }).toList()
-            : [ // Placeholder row if _riwayatTabungan is null or empty
-              DataRow(cells: [
-                DataCell(Text('No data available', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataCell(Text('')),
-                DataCell(Text('')),
-                DataCell(Text('')),
-                DataCell(Text('')),
-                DataCell(Text('')),
-              ]),
-            ],
+                rows: _riwayatTabungan != null && _riwayatTabungan!.isNotEmpty
+                    ? _riwayatTabungan!.map((item) {
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(item['ketsampah_tabungan'] ?? '')),
+                            DataCell(Text(item['tgl_tabungan'] ?? '')),
+                            DataCell(Text(item['tipe_tabungan'] ?? '')),
+                            DataCell(Text(
+                                item['hargasampah_tabungan']?.toString() ??
+                                    '')),
+                            DataCell(Text(
+                                item['beratsampah_tabungan']?.toString() ??
+                                    '')),
+                            DataCell(Text(
+                                item['saldoakhir_tabungan']?.toString() ?? '')),
+                          ],
+                        );
+                      }).toList()
+                    : [
+                        // Placeholder row if _riwayatTabungan is null or empty
+                        DataRow(cells: [
+                          DataCell(Text('No data available',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                          DataCell(Text('')),
+                          DataCell(Text('')),
+                          DataCell(Text('')),
+                          DataCell(Text('')),
+                          DataCell(Text('')),
+                        ]),
+                      ],
+              ),
+            ),
+          ],
         ),
       ),
-    ],
-  ),
-),
-
     );
   }
 }

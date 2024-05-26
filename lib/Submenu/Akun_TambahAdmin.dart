@@ -321,8 +321,7 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
     if (notelp_user.length < 11 || notelp_user.length > 13) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text('Nomor handphone harus terdiri dari 11-13 karakter Angka'),
+          content: Text('Nomor handphone harus terdiri dari 11-13 karakter Angka'),
         ),
       );
       return;
@@ -382,14 +381,30 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Data admin berhasil disimpan'),
+          backgroundColor: Colors.green,
         ),
       );
       // Navigasi ke halaman data admin atau lainnya jika diperlukan
       Navigator.pop(context);
+    } else if (response['message'] == 'Email sudah terdaftar') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Email sudah terdaftar'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else if (response['message'] == 'Nama sudah ada') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Nama sudah ada'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Gagal menyimpan data admin'),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -397,9 +412,11 @@ class _Akun_TambahAkunState extends State<Akun_TambahAkun> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Terjadi kesalahan saat menyimpan data admin: $e'),
+        backgroundColor: Colors.red,
       ),
     );
   }
 }
+
 
 }

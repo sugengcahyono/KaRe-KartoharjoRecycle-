@@ -77,6 +77,7 @@ class _RiwayatKunjunganState extends State<RiwayatKunjungan> {
                 ),
                 SizedBox(width: 10),
                 DropdownButton<int>(
+                  
                   onChanged: (value) {
                     setState(() {
                       _selectedYear = value!;
@@ -95,10 +96,23 @@ class _RiwayatKunjunganState extends State<RiwayatKunjungan> {
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF21690F),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                   onPressed: () {
                     fetchData();
                   },
-                  child: Text('OK'),
+                  child: Text(
+                        'OK',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
                 ),
               ],
             ),
@@ -110,7 +124,13 @@ class _RiwayatKunjunganState extends State<RiwayatKunjungan> {
               itemCount: _riwayatKunjungan!.length,
               itemBuilder: (context, index) {
                 final kunjungan = _riwayatKunjungan![index];
-                return Card(color: Colors.green.shade100,
+                final status = kunjungan['status_kunjungan'];
+                final cardColor = status == 'diterima'
+                    ? Colors.green.shade100
+                    : (status == 'ditolak' ? Colors.red.shade100 : Colors.white);
+
+                return Card(
+                  color: cardColor,
                   child: ListTile(
                     title: Text(
                       kunjungan['nama_kunjungan'] ?? '',
@@ -126,14 +146,14 @@ class _RiwayatKunjunganState extends State<RiwayatKunjungan> {
                         Text('Alamat: ${kunjungan['alamat_kunjungan'] ?? ''}'),
                         Text('Tanggal: ${kunjungan['tgl_kunjungan'] ?? ''}'),
                         Text(
-                            'Nama Instansi: ${kunjungan['namainstansi_kunjungan'] ?? ''}'),
+                            'Instansi: ${kunjungan['namainstansi_kunjungan'] ?? ''}'),
                         Text('No. HP: ${kunjungan['nohp_kunjungan'] ?? ''}'),
                         Text('Tujuan: ${kunjungan['tujuan_kunjungan'] ?? ''}'),
                         Text('Status: ${kunjungan['status_kunjungan'] ?? ''}'),
                         Text(
-                            'Jumlah Kunjungan: ${kunjungan['jumlah_kunjungan'] ?? ''}'),
+                            'Jumlah Orang: ${kunjungan['jumlah_kunjungan'] ?? ''}'),
                         Text(
-                            'Alasan Status: ${kunjungan['alasanstatus_kunjungan'] ?? ''}'),
+                            'Alasan : ${kunjungan['alasanstatus_kunjungan'] ?? ''}'),
                       ],
                     ),
                     onTap: () {

@@ -13,11 +13,11 @@ import 'Submenu/Akun_DataAnggota.dart';
 
 class APIService {
   // final String baseUrl = "http://172.16.104.122/KaRe_Web/KareMobile_API";
-  final String baseUrl1 = "Http://172.16.106.20:8000/api/apimobilekare";  
+  final String baseUrl1 = "https://kartoharjorecycle.tifnganjuk.com/api/apimobilekare";  
   
-  final String kegiatanUrl = "Http://172.16.106.20:8000/Images/Kegiatan/";  //Alamat foto Kegiatan 
-  final String fotoUrl = "Http://172.16.106.20:8000/Images/Foto/";  //Alamat foto User 
-  final String produkUrl = "Http://172.16.106.20:8000/Images/Produk/";  //Alamat foto Produk/pupuk 
+  final String kegiatanUrl = "https://kartoharjorecycle.tifnganjuk.com/Images/Kegiatan/";  //Alamat foto Kegiatan 
+  final String fotoUrl = "https://kartoharjorecycle.tifnganjuk.com/Images/Foto/";  //Alamat foto User 
+  final String produkUrl = "https://kartoharjorecycle.tifnganjuk.com/Images/Produk/";  //Alamat foto Produk/pupuk 
 
 
 Future<List<dynamic>> getRiwayatKunjungan(int bulan, int tahun) async {
@@ -427,32 +427,33 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
 
 
 //MENAMBAH ADMIN
-  Future<Map<String, dynamic>> tambahAdmin2(
+
+Future<Map<String, dynamic>> tambahAdmin2(
   String email,
   String password,
   String namaUser,
   String alamatUser,
   String noTelpUser,
-  File? fotoUser, // Gunakan tipe File untuk foto
+  File? fotoUser,
 ) async {
   try {
     // Buat request multipart
     var request = http.MultipartRequest('POST', Uri.parse('$baseUrl1/TambahAdmin'));
-    
+
     // Tambahkan data biasa
     request.fields['email_user'] = email;
     request.fields['password_user'] = password;
     request.fields['nama_user'] = namaUser;
     request.fields['alamat_user'] = alamatUser;
     request.fields['notelp_user'] = noTelpUser;
-    
+
     // Tambahkan foto jika ada
     if (fotoUser != null) {
       request.files.add(
         http.MultipartFile(
-          'foto_user', 
-          fotoUser.readAsBytes().asStream(), 
-          fotoUser.lengthSync(), 
+          'foto_user',
+          fotoUser.readAsBytes().asStream(),
+          fotoUser.lengthSync(),
           filename: fotoUser.path.split('/').last,
         ),
       );
@@ -464,16 +465,24 @@ Future<void> uploadKegiatan(String judul, String deskripsi, File imageFile, int 
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
       return responseData;
+    } else if (response.statusCode == 400) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      if (responseData['message'] == 'Email sudah terdaftar' ||
+          responseData['message'] == 'Nama sudah ada') {
+        return responseData;
+      } else {
+        throw Exception('Gagal menambahkan admin: ${responseData['message']}');
+      }
     } else {
       print('Response body: ${response.body}');
-      throw Exception(
-          'Gagal menambahkan admin. Error server: ${response.statusCode}');
+      throw Exception('Gagal menambahkan admin. Error server: ${response.statusCode}');
     }
   } catch (e) {
     print(e);
     throw Exception('Gagal menambahkan admin: $e');
   }
 }
+
 
 
 //MENAMBAH ANGGOTA

@@ -111,8 +111,7 @@ class _TabunganDetailPageState extends State<TabunganDetailPage> {
                           scrollDirection: Axis.vertical,
                           child: DataTable(
                             columns: [
-                              DataColumn(
-                                  label: Flexible(child: Text('Uraian'))),
+                              DataColumn(label: Text('Uraian')),
                               DataColumn(label: Text('Tanggal')),
                               DataColumn(label: Text('Type')),
                               DataColumn(label: Text('Nominal')),
@@ -122,9 +121,8 @@ class _TabunganDetailPageState extends State<TabunganDetailPage> {
                             rows: _data.map((item) {
                               return DataRow(
                                 cells: [
-                                  DataCell(Flexible(
-                                      child: Text(
-                                          item['ketsampah_tabungan'] ?? ''))),
+                                  DataCell(
+                                      Text(item['ketsampah_tabungan'] ?? '')),
                                   DataCell(Text(item['tgl_tabungan'] ?? '')),
                                   DataCell(Text(item['tipe_tabungan'] ?? '')),
                                   DataCell(Text(item['hargasampah_tabungan']

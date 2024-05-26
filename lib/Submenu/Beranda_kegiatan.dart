@@ -163,10 +163,11 @@ class _Berada_KegiatanState extends State<Berada_Kegiatan> {
               child: ListView.builder(
                 itemCount: filteredKegiatans.length,
                 itemBuilder: (context, index) {
-                  return _buildKegiatanCard(
+                  return _buildKegiatanCard( 
                     '${apiService.kegiatanUrl}${filteredKegiatans[index]['foto_kegiatan']}',
                     filteredKegiatans[index]['nama_kegiatan'],
                     filteredKegiatans[index]['id_kegiatan'].toString(),
+                    
                   );
                 },
               ),
@@ -179,6 +180,7 @@ class _Berada_KegiatanState extends State<Berada_Kegiatan> {
 
   Widget _buildKegiatanCard(String imageUrl, String title, String idKegiatan) {
     return Card(
+      
       margin: EdgeInsets.only(bottom: 20.0),
       child: InkWell(
         onTap: () {

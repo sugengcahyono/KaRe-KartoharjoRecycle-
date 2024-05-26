@@ -71,11 +71,10 @@ class _BeradaPupukState extends State<BeradaPupuk> {
           builder: (context) => DetailPupukPage(
             idPupuk: idPupuk,
             title: detailPupuk['data']['nama_produk'],
-            harga: detailPupuk['data']['harga_produk'],
-            stok: detailPupuk['data']['stok_produk'],
+            harga: int.parse(detailPupuk['data']['harga_produk']), // Konversi dari String ke int
+            stok: int.parse(detailPupuk['data']['stok_produk']), // Konversi dari String ke int
             deskripsi: detailPupuk['data']['deskripsi_produk'],
-            imageUrl:
-                '${apiService.produkUrl}${detailPupuk['data']['foto_produk']}',
+            imageUrl: '${apiService.produkUrl}${detailPupuk['data']['foto_produk']}',
             userModel: widget.userModel,
           ),
         ),
@@ -96,6 +95,7 @@ class _BeradaPupukState extends State<BeradaPupuk> {
     );
   }
 }
+
 
 
   @override
